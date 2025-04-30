@@ -1,15 +1,44 @@
-name: GKI Build SuKiSu SUSFS
+name: KernelSU-Next SUSFS Build
 on:
   workflow_dispatch:
     inputs:
+      CPU:
+        description: "分支"
+        required: true
+        default: 'sm8750'
+      FEIL:
+        description: "配置文件"
+        required: true
+        default: 'oneplus_13'
+      CPUD:
+        description: "处理器代号"
+        required: true
+        default: 'sun'
       ANDROID_VERSION:
         description: "内核安卓版本"
         required: true
-        default: 'android14'
+        default: 'android15'
       KERNEL_VERSION:
         description: "内核版本"
         required: true
-        default: '6.1'
+        default: '6.6'
+      kernelsu_branch:
+        description: "选择KernelSU-Next分支版本"
+        required: true
+        type: choice
+        options:
+          - Stable
+          - Dev
+          - Next-SuSFS-Dev
+        default: 'Dev'
+      KERNEL_NAME:
+        description: "修改内核名称"
+        required: true
+        default: '-android15-8-g013ec21bba94-abogki383916444'
+      build-timestamp:
+        description: "修改构建时间"
+        required: true
+        default: 'Tue Dec 17 23:36:49 UTC 2024'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: |
          sudo apt update && sudo apt upgrade -y
-         sudo apt install -y python3 git curl ccache
+         sudo apt install -y python3 git curl
 
       - name: Install repo tool
         run: |
@@ -47,46 +76,76 @@ jobs:
       - name: Initialize repo and sync
         run: |
          mkdir kernel_workspace && cd kernel_workspace
-         repo init -u https://github.com/JiuGeFaCai/repo.git -m manifest.xml --depth=1
+         repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }} -m ${{ github.event.inputs.FEIL }}.xml --depth=1
          repo --trace sync -c -j$(nproc --all) --no-tags
-         rm common/android/abi_gki_protected_exports_* || echo "No protected exports!"
+         rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
+         rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
+         echo "完成"
          
-      - name: Set up SukiSU
+      - name: 设置 KernelSU 分支
         run: |
-         cd kernel_workspace
-         curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-dev
-         cd ./KernelSU
-         KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 10606)
-         echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
+         cd kernel_workspace/kernel_platform
+         if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-"
+          echo "::notice::✔ 已选择 Stable 分支"
+         elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
+          echo "::notice::✔ 已选择 Dev 分支"
+         elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then BRANCH="-s next-susfs-dev"
+          echo "::notice::✔ 已选择 Next-SuSFS-Dev 分支"
+          fi
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
+          echo "完成"
+          cd ./KernelSU-Next
+          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
+          echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
+          sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
+          echo "完成"
          
-      - name: Set up susfs
+      - name: 安装susfs补丁
         run: |
            cd kernel_workspace
            git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
-           git clone https://github.com/ShirkNeko/SukiSU_patch.git
-           cp susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
-           cp susfs4ksu/kernel_patches/fs/* ./common/fs/
-           cp susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-
-           # Apply patches
-           cd ./common
-           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-           # cp ../kernel_patches/69_hide_stuff.patch ./
-           cp ../../SukiSU_patch/hooks/new_hooks.patch ./
-           # patch -p1 -F 3 < 69_hide_stuff.patch
-           patch -p1 -F 3 < new_hooks.patch        
+           git clone https://github.com/mehu3dhokia/kernel_patches.git
+           cd kernel_platform
+           cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
+           cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
+           cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+           cp ../kernel_patches/next/kernel-implement-susfs-v1.5.7-gki.patch ./KernelSU-Next
+           echo "copy file完成"
            
-      - name: Add SUSFS Configuration Settings
+           cd ./KernelSU-Next
+           if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then   
+           patch -p1 --forward < kernel-implement-susfs-v1.5.7-gki.patch || true
+           echo "::notice::✔ Stable ksunext补丁安装完成"
+           elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then 
+           patch -p1 --forward < kernel-implement-susfs-v1.5.7-gki.patch || true
+           echo "::notice::✔ Dev ksunext补丁安装完成"
+           elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then 
+           echo "::notice::✔ 跳过ksunext补丁安装"
+           fi
+           
+           cd ../common
+           sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           
+           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+           echo "susfs补丁安装完成" 
+           cp ../../kernel_patches/next/syscall_hooks.patch ./
+           patch -p1 -F 3 < syscall_hooks.patch
+           echo "新hook补丁安装完成"
+#           rm -rf ./fs/namespace.c
+#           rm -rf ./fs/namespace.c.rej
+#           cp ../../kernel_patches/namespace.c ./fs
+#           echo "复制namespace.c完成"
+#           cp ../../kernel_patches/69_hide_stuff.patch ./
+#           patch -p1 -F 3 < 69_hide_stuff.patch
+#           echo "隐藏特征补丁安装完成"
+           
+      - name: 添加 SUSFS 配置设置
         run: |
-          cd kernel_workspace
+          cd kernel_workspace/kernel_platform
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # Add VFS configuration settings
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
-          
-          # Add SUSFS configuration settings
+          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -103,44 +162,51 @@ jobs:
           echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
          
-          # Remove check_defconfig
           sed -i 's/check_defconfig//' ./common/build.config.gki
           cd common
           git add -A && git commit -a -m "BUILD Kernel"
+          echo "完成"
+
+      - name: 配置内核名称
+        run: |
+          cd kernel_workspace/kernel_platform
+          sed -i -e 's|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"${{ github.event.inputs.build-timestamp }}\"|' ./common/init/Makefile
+          sed -i 's/res="\$res\$(cat "\$file")"/res="${{ github.event.inputs.KERNEL_NAME }}"/g' ./common/scripts/setlocalversion
+          echo "完成"
+
+      - name: Add sched_ext
+        run: |
+          cd kernel_workspace/kernel_platform/common/drivers
+          git clone https://github.com/JiuGeFaCai/sched_ext.git
+          rm -rf ./sched_ext/.git
+          printf "\nobj-y                              += sched_ext/\n" >> Makefile
+          echo "添加风驰内核完成"
                           
       - name: Build kernel
         run: |
-         cd kernel_workspace
-         if [ -e build/build.sh ]; then
-           LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="/usr/bin/ccache clang"
-         else
-           tools/bazel run --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
-         fi
-      - name: Make AnyKernel3
+         cd kernel_workspace/kernel_platform
+         tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+         echo "完成"
+         
+      - name: 制作 AnyKernel3
         run: |
-         OUTDIR=kernel_workspace/out/${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}/dist
+         OUTDIR=kernel_workspace/kernel_platform/out/${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}/dist
          if [ ! -e $OUTDIR ]; then
-           OUTDIR=kernel_workspace/dist
+           OUTDIR=kernel_workspace/kernel_platform/dist
          fi
-         mkdir output
-         cp $OUTDIR/Image ./output/
-         curl -LO https://github.com/ShirkNeko/SukiSU_KernelPatch_patch/releases/download/0.11-beta/patch_linux
-         chmod +x patch_linux
-         ./patch_linux
-         rm -f Image
-         mv oImage Image
          git clone https://github.com/WildPlusKernel/AnyKernel3.git --depth=1
          rm -rf ./AnyKernel3/.git
          cp $OUTDIR/Image ./AnyKernel3/
+         echo "完成"
 
-      - name: Upload AnyKernel3
+      - name: 上传 AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-         name: SuKiSu_${{ env.KSUVER }}_${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
+         name: KernelSU-Next_${{ env.KSUVER }}_${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
          path: ./AnyKernel3/*
          
-      - name: Upload Image
+      - name: 上传镜像
         uses: actions/upload-artifact@v4
         with:
-         name: Image
-         path: ./output/*
+         name: Image_KernelSU-Next_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
+         path: kernel_workspace/kernel_platform/dist/Image
