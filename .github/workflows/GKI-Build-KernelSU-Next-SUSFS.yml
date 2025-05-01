@@ -188,16 +188,12 @@ jobs:
          tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
          echo "完成"
          
-      - name: 制作 AnyKernel3
+      - name: Make AnyKernel3
         run: |
-         OUTDIR=kernel_workspace/kernel_platform/out/${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}/dist
-         if [ ! -e $OUTDIR ]; then
-           OUTDIR=kernel_workspace/kernel_platform/dist
-         fi
-         git clone https://github.com/WildPlusKernel/AnyKernel3.git --depth=1
+         git clone https://github.com/JiuGeFaCai/AnyKernel3.git --depth=1      
          rm -rf ./AnyKernel3/.git
-         cp $OUTDIR/Image ./AnyKernel3/
-         echo "完成"
+         rm -rf ./AnyKernel3/push.sh
+         cp kernel_workspace/kernel_platform/dist/Image ./AnyKernel3/
 
       - name: 上传 AnyKernel3
         uses: actions/upload-artifact@v4
