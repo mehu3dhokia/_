@@ -1,4 +1,4 @@
-name: KernelSU-Next SUSFS Build
+name: KernelSU_Next_SUSFS_GKI_Build
 on:
   workflow_dispatch:
     inputs:
@@ -202,11 +202,11 @@ jobs:
       - name: 上传 AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-         name: KernelSU-Next_${{ env.KSUVER }}_${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
+         name: KernelSU_Next_${{ env.KSUVER }}_${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
          path: ./AnyKernel3/*
          
       - name: 上传镜像
         uses: actions/upload-artifact@v4
         with:
-         name: Image_KernelSU-Next_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
+         name: Image_KernelSU_Next_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
          path: kernel_workspace/kernel_platform/dist/Image
