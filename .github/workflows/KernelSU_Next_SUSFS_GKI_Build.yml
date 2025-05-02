@@ -95,10 +95,11 @@ jobs:
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
           echo "完成"
           cd ./KernelSU-Next
-          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
-          echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
+          KSU_GIT_VERSION=$(git rev-list --count HEAD)
+          KSU_VERSION=$(expr 10000 + ${KSU_GIT_VERSION} + 200)
+          echo "KSUVER=${KSU_VERSION}" >> $GITHUB_ENV
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
-          echo "完成"
+          echo "::notice::${KSU_VERSION}"
          
       - name: 安装susfs补丁
         run: |
