@@ -95,7 +95,7 @@ jobs:
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
           echo "完成"
           cd ./KernelSU-Next
-          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
+          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEADS) "+" 10200)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
           echo "::notice::${KSU_VERSION}"
@@ -181,23 +181,16 @@ jobs:
                           
       - name: Build kernel
         run: |
-         cd kernel_workspace
-         if [ -e build/build.sh ]; then
-           LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="/usr/bin/ccache clang"
-         else
-           tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
-         fi
+         cd kernel_workspace/kernel_platform
+         tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
          echo "完成"
          
       - name: Make AnyKernel3
         run: |
-         OUTDIR=kernel_workspace/kernel_platform/out/${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}/dist
-         if [ ! -e $OUTDIR ]; then
-           OUTDIR=kernel_workspace/kernel_platform/dist
-         fi
-         git clone https://github.com/WildPlusKernel/AnyKernel3.git --depth=1
+         git clone https://github.com/WildPlusKernel/AnyKernel3.git --depth=1      
          rm -rf ./AnyKernel3/.git
-         cp $OUTDIR/Image ./AnyKernel3/
+         rm -rf ./AnyKernel3/push.sh
+         cp kernel_workspace/kernel_platform/dist/Image ./AnyKernel3/
          echo "完成"
 
       - name: 上传 AnyKernel3
