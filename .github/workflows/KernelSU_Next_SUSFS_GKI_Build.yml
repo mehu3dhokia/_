@@ -99,6 +99,8 @@ jobs:
           KSU_VERSION=$(expr 10000 + ${KSU_GIT_VERSION} + 200)
           echo "KSUVER=${KSU_VERSION}" >> $GITHUB_ENV
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
+          echo "::notice::根目录提交数: $(git rev-list --count HEAD)"
+          echo "::notice::KernelSU目录提交数: $(cd ./KernelSU-Next && git rev-list --count HEAD)"
           echo "::notice::${KSU_VERSION}"
          
       - name: 安装susfs补丁
