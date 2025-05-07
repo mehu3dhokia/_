@@ -95,19 +95,7 @@ jobs:
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
           echo "完成"
           cd ./KernelSU-Next
-          # 如果是浅克隆，先修复
-          if [ -f .git/shallow ]; then
-          git fetch --unshallow
-          fi
-
-          # 计算准确的提交数
-          GIT_COMMIT_COUNT=$($(which git) rev-list --count HEAD)
-          echo "::notice::Total Git commits: $GIT_COMMIT_COUNT"  # 调试输出
-
-          # 按第一段标准计算版本号
-          KSU_VERSION=$(expr $GIT_COMMIT_COUNT "+" 10200)
-
-          # 更新环境变量和 Makefile
+          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           export KSU_VERSION=$KSU_VERSION
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
