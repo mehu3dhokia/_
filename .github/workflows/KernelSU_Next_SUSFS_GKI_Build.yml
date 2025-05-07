@@ -111,7 +111,7 @@ jobs:
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           export KSU_VERSION=$KSU_VERSION
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
-          echo "::notice::KSU Version = ${KSU_VERSION}"
+          echo "::notice::KSU Version: ${KSU_VERSION}"
          
       - name: 安装susfs补丁
         run: |
