@@ -30,11 +30,11 @@ on:
         description: "修改构建时间"
         required: true
         default: 'Tue Dec 17 23:36:49 UTC 2024'
-      KPM:
-        type: boolean
-        description: "启用KPM？"
-        required: true
-        default: true
+      #KPM:
+      #  type: boolean
+      #  description: "启用KPM？"
+      #  required: true
+        #default: true
       lz4kd:
         type: boolean
         description: "启用lz4kd？"
