@@ -30,16 +30,6 @@ on:
         description: "修改构建时间"
         required: true
         default: 'Tue Dec 17 23:36:49 UTC 2024'
-      #KPM:
-      #  type: boolean
-      #  description: "启用KPM？"
-      #  required: true
-        #default: true
-      lz4kd:
-        type: boolean
-        description: "启用lz4kd？"
-        required: true
-        default: false
 
 jobs:
   build:
@@ -104,10 +94,10 @@ jobs:
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
            #lz4kd
-           cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
-           cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
-           cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
-           cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
+           #cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
+           #cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
+           #cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
+           #cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
            # Apply patches
            cd ./common
 
@@ -123,16 +113,16 @@ jobs:
            patch -p1 -F 3 < syscall_hooks.patch
            echo "完成"
 
-      - name: Apply lz4kd Patches
-        run: |
-          cd kernel_workspace/kernel_platform/common
-          if [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-          cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
-          patch -p1 -F 3 < lz4kd.patch || true
-          echo "::notice::✔ lz4kd补丁安装完成"
-          elif [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-          echo "::notice::✔ 跳过lz4kd补丁安装"
-          fi
+      #- name: Apply lz4kd Patches
+        #run: |
+          #cd kernel_workspace/kernel_platform/common
+          #if [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
+          #cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
+          #patch -p1 -F 3 < lz4kd.patch || true
+          #echo "::notice::✔ lz4kd补丁安装完成"
+          #elif [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
+          #echo "::notice::✔ 跳过lz4kd补丁安装"
+          #fi
            
       - name: Add SUSFS Configuration Settings
         run: |
@@ -160,38 +150,6 @@ jobs:
           echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # Add lz4kd
-          # ===== LZ4HC（高压缩率版LZ4）=====
-          echo "CONFIG_LZ4HC_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # ===== LZ4K（优化版LZ4，低延迟）=====
-          echo "CONFIG_LZ4K_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_LZ4K_DECOMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # ===== LZ4KD（优化版LZ4，高压缩率 + 低延迟）=====
-          echo "CONFIG_LZ4KD_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_LZ4KD_DECOMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # ===== 842（IBM PowerPC 专用压缩算法）=====
-          echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # ===== LZ4KD_OPLUS (定制优化版) =====
-          echo "CONFIG_CRYPTO_LZ4K_OPLUS=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # ===== 通用依赖（XXHASH + ZRAM 支持）=====
-          echo "CONFIG_XXHASH=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_ALGAPI=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_ACOMP2=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # ===== ZRAM集成配置 =====
-          echo "CONFIG_ZRAM=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_ZSMALLOC=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_ZRAM_DEF_COMP_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo 'CONFIG_ZRAM_DEF_COMP="lz4kd"' >> ./common/arch/arm64/configs/gki_defconfig
 
           # Remove check_defconfig
           sed -i 's/check_defconfig//' ./common/build.config.gki
