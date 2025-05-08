@@ -107,7 +107,7 @@ jobs:
            cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
            cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
            cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
-           #cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
+           cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
            # Apply patches
            cd ./common
 
@@ -175,31 +175,36 @@ jobs:
           echo "CONFIG_TCP_CONG_HTCP=n" >> ./common/arch/arm64/configs/gki_defconfig
 
           # Add lz4kd
-          # ===== LZ4HC（高压缩率版LZ4）=====
+          # ===== LZ4HC (高压缩率版) =====
           echo "CONFIG_LZ4HC_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
 
-          # ===== LZ4K（优化版LZ4，低延迟）=====
+          # ===== LZ4K (低延迟优化版) =====
           echo "CONFIG_LZ4K_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_LZ4K_DECOMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CRYPTO_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
 
-          # ===== LZ4KD（优化版LZ4，高压缩率 + 低延迟）=====
+          # ===== LZ4KD (高性能优化版) =====
           echo "CONFIG_LZ4KD_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_LZ4KD_DECOMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
 
-          # ===== 842（IBM PowerPC 专用压缩算法）=====
+          # ===== 842 (IBM专用算法) =====
           echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
 
-          # ===== 通用依赖（XXHASH + ZRAM 支持）=====
+          # ===== LZ4KDOPLUS (定制优化版) =====
+          echo "CONFIG_CRYPTO_LZ4K_OPLUS=y" >> ./common/arch/arm64/configs/gki_defconfig
+
+          # ===== 公共依赖 =====
           echo "CONFIG_XXHASH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CRYPTO_ALGAPI=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CRYPTO_ACOMP2=y" >> ./common/arch/arm64/configs/gki_defconfig
+
+          # ===== ZRAM集成配置 =====
           echo "CONFIG_ZRAM=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_ZSMALLOC=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-          # ===== 可选：设置 ZRAM 默认压缩算法（例如设为 LZ4KD）=====
           echo "CONFIG_ZRAM_DEF_COMP_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_ZRAM_DEF_COMP=\"lz4kd\"" >> ./common/arch/arm64/configs/gki_defconfig
+          echo 'CONFIG_ZRAM_DEF_COMP="lz4kd"' >> ./common/arch/arm64/configs/gki_defconfig
 
           # Remove check_defconfig
           sed -i 's/check_defconfig//' ./common/build.config.gki
