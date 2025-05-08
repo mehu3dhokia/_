@@ -205,6 +205,9 @@ jobs:
               echo "CONFIG_CRYPTO_LZ4KD=y" >> "$CONFIG_FILE"
               echo "CONFIG_CRYPTO_842=y" >> "$CONFIG_FILE"
             fi
+            elif [ "${{ github.event.inputs.lz4kd }}" = "false" ]; then
+            echo "::notice::✔ 跳过KPM"
+            fi
           fi
          
           # Remove check_defconfig
