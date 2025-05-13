@@ -107,7 +107,7 @@ jobs:
 
            patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
            cp ../../SukiSU_patch/hooks/syscall_hooks.patch ./
-           patch -p1 -F 3 < syscall_hooks.patch
+           patch -p1 < syscall_hooks.patch
            echo "完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
