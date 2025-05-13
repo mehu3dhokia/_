@@ -115,7 +115,6 @@ jobs:
            echo "copy file完成"
            
            cd ./KernelSU-Next
-           patch -p1 < manager.patch
            if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then   
            patch -p1 < kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch || true
            echo "::notice::✔ Stable ksunext补丁安装完成"
@@ -136,6 +135,11 @@ jobs:
            cp ../../kernel_patches/next/syscall_hooks.patch ./
            patch -p1 < syscall_hooks.patch
            echo "新hook补丁安装完成"
+
+           
+           cd ./KernelSU-Next
+           patch -p1 < manager.patch
+           echo "管理器补丁安装完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
 #           cp ../../kernel_patches/namespace.c ./fs
