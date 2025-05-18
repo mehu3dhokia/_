@@ -152,6 +152,7 @@ jobs:
             echo "::notice::✔ 开启kpm"
           elif [ "${{ inputs.use_kpm }}" == "false" ]; then
             echo "::notice::✔ 未开启kpm"
+          fi
 
           # Add VFS configuration settings
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
@@ -213,6 +214,7 @@ jobs:
           echo "::notice::✔ 应用kpm补丁完成"
          elif [ "${{ inputs.use_kpm }}" == "false" ]; then
           echo "::notice::✔ 未应用kpm补丁"
+         fi
          
       - name: Make AnyKernel3
         run: |
