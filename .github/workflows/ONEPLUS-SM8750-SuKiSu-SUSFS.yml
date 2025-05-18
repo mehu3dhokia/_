@@ -183,7 +183,7 @@ jobs:
       - name: Add make name
         run: |
          cd kernel_workspace/kernel_platform
-         sed -i '30s/UTS_VERSION/"#1 SMP PREEMPT Tue Dec 17 23:36:49 UTC 2024"/' init/version-timestamp.c
+         sed -i '30s/UTS_VERSION/"#1 SMP PREEMPT Tue Dec 17 23:36:49 UTC 2024"/' ./init/version-timestamp.c
          #sed -i -e 's|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"${{ github.event.inputs.build-timestamp }}\"|' ./common/init/Makefile#
          sed -i 's/res="\$res\$(cat "\$file")"/res="${{ github.event.inputs.KERNEL_NAME }}"/g' ./common/scripts/setlocalversion
 
