@@ -23,7 +23,7 @@ on:
         required: true
         default: '6.6'
       kernelsu_branch:
-        description: "选择Sukisu分支版本"
+        description: "Sukisu分支版本"
         required: true
         type: choice
         options:
@@ -38,6 +38,11 @@ on:
         description: "修改构建时间"
         required: true
         default: 'Tue Dec 17 23:36:49 UTC 2024'
+      use_kpm:
+        description: '是否开启KPM功能?'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -142,7 +147,11 @@ jobs:
         run: |
           cd kernel_workspace/kernel_platform
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          if [ "${{ inputs.use_kpm }}" == "true" ]; then
+            echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "::notice::✔ 开启kpm"
+          elif [ "${{ inputs.use_kpm }}" == "false" ]; then
+            echo "::notice::✔ 未开启kpm"
 
           # Add VFS configuration settings
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
@@ -195,11 +204,15 @@ jobs:
       - name: Apply patch_linux
         run: |
          cd kernel_workspace/kernel_platform/dist/
+         if [ "${{ inputs.use_kpm }}" == "true" ]; then
          curl -LO https://github.com/ShirkNeko/SukiSU_KernelPatch_patch/releases/download/0.11-beta/patch_linux
          chmod +x patch_linux
          ./patch_linux
          rm -f Image
          mv oImage Image
+          echo "::notice::✔ 应用kpm补丁完成"
+         elif [ "${{ inputs.use_kpm }}" == "false" ]; then
+          echo "::notice::✔ 未应用kpm补丁"
          
       - name: Make AnyKernel3
         run: |
