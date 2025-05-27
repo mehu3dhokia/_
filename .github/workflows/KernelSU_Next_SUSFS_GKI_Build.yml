@@ -113,16 +113,16 @@ jobs:
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-           #cp ../kernel_patches/next/kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch ./KernelSU-Next#
+           cp ../kernel_patches/next/0001-kernel-patch-susfs-v1.5.7-to-KernelSU-Next-v1.0.7.patch ./KernelSU-Next#
            cp ../kernel_patches/next/manager.patch ./KernelSU-Next
            echo "copy file完成"
            
            cd ./KernelSU-Next
            if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then   
-           patch -p1 < kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch || true
+           patch -p1 < 0001-kernel-patch-susfs-v1.5.7-to-KernelSU-Next-v1.0.7.patch || true
            echo "::notice::✔ Stable ksunext补丁安装完成"
            elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then 
-           patch -p1 < kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch || true
+           patch -p1 < 0001-kernel-patch-susfs-v1.5.7-to-KernelSU-Next-v1.0.7.patch || true
            echo "::notice::✔ Dev ksunext补丁安装完成"
            elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
            echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
@@ -130,11 +130,13 @@ jobs:
            echo "::notice::✔ Next-SuSFS-Dev 跳过ksunext补丁安装"
            fi   
                    
-           cd ../common          
+           cd ../common
+           
            sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
            sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           
            patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-           echo "susfs补丁安装完成" 
+           echo "susfs补丁安装完成"
            cp ../../kernel_patches/next/syscall_hooks.patch ./
            patch -p1 < syscall_hooks.patch
            echo "新hook补丁安装完成"
