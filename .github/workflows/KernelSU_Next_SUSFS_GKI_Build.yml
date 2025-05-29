@@ -47,6 +47,8 @@ jobs:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
+      CCACHE_DIR: /home/runner/.ccache  
+      CCACHE_MAXSIZE: 8G
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
@@ -67,6 +69,15 @@ jobs:
         run: |
          sudo apt update && sudo apt upgrade -y
          sudo apt install -y python3 git curl
+         sudo apt install -y python3 git curl ccache
+
+      - name: Restore ccache
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/.ccache
+          key: ccache-${{ runner.os }}-${{ github.ref }}
+          restore-keys: |
+            ccache-${{ runner.os }}-
 
       - name: Install repo tool
         run: |
@@ -184,9 +195,12 @@ jobs:
 
       - name: 配置内核名称
         run: |
-          cd kernel_workspace/kernel_platform
+          #cd kernel_workspace/kernel_platform
           sed -i -e 's|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"${{ github.event.inputs.build-timestamp }}\"|' ./common/init/Makefile
-          sed -i 's/res="\$res\$(cat "\$file")"/res="${{ github.event.inputs.KERNEL_NAME }}"/g' ./common/scripts/setlocalversion
+          #sed -i 's/res="\$res\$(cat "\$file")"/res="${{ github.event.inputs.KERNEL_NAME }}"/g' ./common/scripts/setlocalversion
+          cd kernel_workspace/kernel_platform
+          #sed -i 's/${scm_version}//' ./common/scripts/setlocalversion
+          sudo sed -i 's/-4k/${{ github.event.inputs.KERNEL_NAME }}/g' ./common/arch/arm64/configs/gki_defconfig
           echo "完成"
 
 #      - name: Add sched_ext
@@ -202,6 +216,7 @@ jobs:
       - name: Build kernel
         run: |
          export PATH="${GITHUB_WORKSPACE}/kernel_workspace/kernel_platform/prebuilts/clang/host/linux-x86/clang-r510928/bin:$PATH"
+         export PATH="/usr/lib/ccache:$PATH"
          sudo apt install libelf-dev
          cd kernel_workspace/kernel_platform/common
          make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC=clang RUSTC=../../prebuilts/rust/linux-x86/1.73.0b/bin/rustc PAHOLE=../../prebuilts/kernel-build-tools/linux-x86/bin/pahole LD=ld.lld  HOSTLD=ld.lld O=out KCFLAGS+=-Wno-error gki_defconfig all
@@ -226,4 +241,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
          name: Image_KernelSU_Next_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
-         path: kernel_workspace/kernel_platform/dist/Image
+         path: kernel_workspace/kernel_platform/common/out/arch/arm64/boot/Image
