@@ -196,10 +196,10 @@ jobs:
       - name: 配置内核名称
         run: |
           #cd kernel_workspace/kernel_platform
-          sed -i -e 's|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"${{ github.event.inputs.build-timestamp }}\"|' ./common/init/Makefile
+          #sed -i -e 's|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"${{ github.event.inputs.build-timestamp }}\"|' ./common/init/Makefile
           #sed -i 's/res="\$res\$(cat "\$file")"/res="${{ github.event.inputs.KERNEL_NAME }}"/g' ./common/scripts/setlocalversion
           cd kernel_workspace/kernel_platform
-          #sed -i 's/${scm_version}//' ./common/scripts/setlocalversion
+          sed -i 's/${scm_version}//' ./common/scripts/setlocalversion
           sudo sed -i 's/-4k/${{ github.event.inputs.KERNEL_NAME }}/g' ./common/arch/arm64/configs/gki_defconfig
           echo "完成"
 
