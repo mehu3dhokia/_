@@ -1,4 +1,4 @@
-name: KernelSU_Next_SUSFS_GKI_Build
+name: tset
 on:
   workflow_dispatch:
     inputs:
