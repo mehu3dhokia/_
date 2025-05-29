@@ -201,8 +201,11 @@ jobs:
                           
       - name: Build kernel
         run: |
-         cd kernel_workspace/kernel_platform
-         tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+         export PATH="/home/runner/work/KernelSU_Next_SUSFS_GKI_Build/KernelSU_Next_SUSFS_GKI_Build/kernel_workspace/kernel_platform/prebuilts/clang/host/linux-x86/clang-r510928/bin:$PATH"
+         sudo apt install libelf-dev
+         cd kernel_workspace/kernel_platform/common
+         make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC=clang RUSTC=../../prebuilts/rust/linux-x86/1.73.0b/bin/rustc PAHOLE=../../prebuilts/kernel-build-tools/linux-x86/bin/pahole LD=ld.lld  HOSTLD=ld.lld O=out KCFLAGS+=-Wno-error gki_defconfig all
+          
          echo "完成"
          
       - name: Make AnyKernel3
@@ -210,7 +213,7 @@ jobs:
          git clone https://github.com/WildPlusKernel/AnyKernel3.git --depth=1      
          rm -rf ./AnyKernel3/.git
          rm -rf ./AnyKernel3/push.sh
-         cp kernel_workspace/kernel_platform/dist/Image ./AnyKernel3/
+         cp kernel_workspace/kernel_platform/common/out/arch/arm64/boot/Image ./AnyKernel3/
          echo "完成"
 
       - name: 上传 AnyKernel3
