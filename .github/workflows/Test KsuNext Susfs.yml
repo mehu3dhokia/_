@@ -1,4 +1,4 @@
-name: tset
+name: TEST KsuNext Susfs
 on:
   workflow_dispatch:
     inputs:
@@ -215,7 +215,7 @@ jobs:
                           
       - name: Build kernel
         run: |
-         export KBUILD_BUILD_TIMESTAMP="${{ github.event.inputs.KERNEL_TIME }}"
+         export KBUILD_BUILD_TIMESTAMP="${{ github.event.inputs.build-timestamp }}"
          export PATH="${GITHUB_WORKSPACE}/kernel_workspace/kernel_platform/prebuilts/clang/host/linux-x86/clang-r510928/bin:$PATH"
          export PATH="/usr/lib/ccache:$PATH"
          sudo apt install libelf-dev
