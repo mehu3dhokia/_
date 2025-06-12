@@ -1,4 +1,4 @@
-name: KernelSU_Next_SUSFS_GKI_Build
+name: KernelSU_SUSFS_GKI_Build
 on:
   workflow_dispatch:
     inputs:
@@ -31,7 +31,7 @@ on:
           - Dev
           - Next-SuSFS-Stable
           - Next-SuSFS-Dev
-        default: 'Next-SuSFS-Dev'
+        default: 'Dev'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
