@@ -120,9 +120,11 @@ jobs:
            # Apply patches
            
            cd ./KernelSU
-              cp ../../kernel_patches/mksu/0002-kernel-patch-susfs-v1.5.7.patch ./
-              patch -p1 < 0002-kernel-patch-susfs-v1.5.7.patch
-              echo "susfs完成"
+              cp ../../kernel_patches/mksu/mksu_susfs.patch ./
+              patch -p1 < mksu_susfs.patch
+              cp ../../kernel_patches/mksu/fix.patch ./
+              patch -p1 < fix.patch
+              echo "susfs补丁安装完成"
               
            cd ./common
 
@@ -132,7 +134,7 @@ jobs:
            patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
            cp ../../kernel_patches/mksu/vfs_fix.patch ./
            patch -p1 < vfs_fix.patch
-           echo "完成"
+           echo "vfs补丁完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
 #           cp ../../kernel_patches/namespace.c ./fs
