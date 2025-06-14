@@ -120,10 +120,8 @@ jobs:
            # Apply patches
            
            cd ./KernelSU
-              cp ../../kernel_patches/mksu/mksu_susfs.patch ./
-              patch -p1 < mksu_susfs.patch
-              cp ../../kernel_patches/mksu/fix.patch ./
-              patch -p1 < fix.patch
+              cp ../../kernel_patches/mksu/10_enable_susfs_for_ksu.patch ./
+              patch -p1 < 10_enable_susfs_for_ksu.patch
               echo "susfs补丁安装完成"
               
            cd ./common
@@ -132,8 +130,8 @@ jobs:
            sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
 
            patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-           cp ../../kernel_patches/mksu/vfs_fix.patch ./
-           patch -p1 < vfs_fix.patch
+           cp ../../kernel_patches/sukisu/syscall_hooks.patch ./
+           patch -p1 < syscall_hooks.patch
            echo "vfs补丁完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
