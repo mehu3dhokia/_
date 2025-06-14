@@ -22,14 +22,14 @@ on:
         description: "内核版本"
         required: true
         default: '6.6'
-      kernelsu_branch:
-        description: "Sukisu分支版本"
-        required: true
-        type: choice
-        options:
-          - Stable
-          - Dev
-        default: 'Dev'
+      #kernelsu_branch:
+        #description: "Sukisu分支版本"
+        #required: true
+        #type: choice
+        #options:
+          #- Stable
+          #- Dev
+        #default: 'Dev'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
@@ -89,12 +89,13 @@ jobs:
       - name: Set up SukiSU
         run: |
          cd kernel_workspace/kernel_platform
-         if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-s susfs-stable"
-          echo "::notice::✔ 已选择 Stable 分支"
-         elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s susfs-dev"
-          echo "::notice::✔ 已选择 Dev 分支"
-          fi
-         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
+         #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-s susfs-stable"
+          #echo "::notice::✔ 已选择 Stable 分支"
+         #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s susfs-dev"
+          #echo "::notice::✔ 已选择 Dev 分支"
+          #fi
+         #curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
+         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
          cd ./KernelSU
          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 10606)
          echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
