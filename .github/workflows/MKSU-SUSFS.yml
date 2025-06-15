@@ -120,19 +120,29 @@ jobs:
            # Apply patches
            
            cd ./KernelSU
-              cp ../../kernel_patches/mksu/10_enable_susfs_for_ksu.patch ./
+              cp ../../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./
               patch -p1 < 10_enable_susfs_for_ksu.patch
+              
+              cp ../../kernel_patches/mksu/mksu_susfs.patch ./
+              patch -p1 < mksu_susfs.patch || true
+              
+              cp ../../kernel_patches/mksu/fix.patch ./
+              patch -p1 < fix.patch || true
+              
               echo "susfs补丁安装完成"
               
            cd ./common
+           
+             sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+             sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
 
-           sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-           sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-
-           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-           cp ../../kernel_patches/sukisu/syscall_hooks.patch ./
-           patch -p1 < syscall_hooks.patch
-           echo "vfs补丁完成"
+             patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+              
+             cp ../../kernel_patches/sukisu/syscall_hooks.patch ./
+             
+             patch -p1 < syscall_hooks.patch
+              
+             echo "vfs补丁完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
 #           cp ../../kernel_patches/namespace.c ./fs
@@ -154,10 +164,10 @@ jobs:
           cd kernel_workspace/kernel_platform
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           if [ "${{ inputs.use_kpm }}" == "true" ]; then
-            echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "::notice::✔ 开启kpm"
+           echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
+           echo "::notice::✔ 开启kpm"
           elif [ "${{ inputs.use_kpm }}" == "false" ]; then
-            echo "::notice::✔ 未开启kpm"
+           echo "::notice::✔ 未开启kpm"
           fi
 
           # Add VFS configuration settings
