@@ -29,9 +29,9 @@ on:
         options:
           - Stable
           - Dev
-          - Next-SuSFS-Stable
-          - Next-SuSFS-Dev
-        default: 'Next-SuSFS-Dev'
+          #- Next-SuSFS-Stable
+          #- Next-SuSFS-Dev
+        default: 'Stable'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
@@ -90,10 +90,10 @@ jobs:
           echo "::notice::✔ 已选择 Stable 分支"
          elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
           echo "::notice::✔ 已选择 Dev 分支"
-         elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then BRANCH="-s next-susfs"
-          echo "::notice::✔ 已选择 Next-SuSFS-Stable 分支"
-         elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then BRANCH="-s next-susfs-dev"
-          echo "::notice::✔ 已选择 Next-SuSFS-Dev 分支"
+         #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then BRANCH="-s next-susfs"
+          #echo "::notice::✔ 已选择 Next-SuSFS-Stable 分支"
+         #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then BRANCH="-s next-susfs-dev"
+          #echo "::notice::✔ 已选择 Next-SuSFS-Dev 分支"
           fi
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
           echo "完成"
