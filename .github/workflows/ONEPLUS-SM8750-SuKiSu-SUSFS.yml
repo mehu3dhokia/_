@@ -217,7 +217,7 @@ jobs:
       - name: Build kernel
         run: |
          cd kernel_workspace/kernel_platform
-         tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+         tools/bazel run --config=fast --lto=thin --copt=-O2 //common:kernel_aarch64_dist -- --dist_dir=dist
 
       - name: Apply patch_linux
         run: |
