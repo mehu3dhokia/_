@@ -104,7 +104,7 @@ jobs:
         
       - name: Set up susfs
         run: |
-           cd kernel_workspace
+         cd kernel_workspace
           git clone https://github.com/mehu3dhokia/susfs4ksu.git
           git clone https://github.com/mehu3dhokia/kernel_patches.git
           cd kernel_platform
