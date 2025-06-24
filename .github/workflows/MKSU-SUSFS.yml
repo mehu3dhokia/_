@@ -105,56 +105,28 @@ jobs:
       - name: Set up susfs
         run: |
            cd kernel_workspace
-           #git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
-           git clone https://github.com/mehu3dhokia/susfs4ksu.git
-           git clone https://github.com/mehu3dhokia/kernel_patches.git
+          git clone https://github.com/mehu3dhokia/susfs4ksu.git
+          git clone https://github.com/mehu3dhokia/kernel_patches.git
+          cd kernel_platform
+          cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU/
+          cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-android15-6.6.patch ./common/
+          cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
+          cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+          cd ./KernelSU
+          patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
+          cp ../../kernel_patches/mksu/mksu_susfs.patch ../KernelSU/
+          patch -p1 < mksu_susfs.patch || true
+          cp ../../kernel_patches/mksu/fix.patch ../KernelSU/
+          patch -p1 < fix.patch || true
+          cd ../common
+          patch -p1 < 50_add_susfs_in_gki-android15-6.6.patch || true
 
-           cd kernel_platform        
-           #cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
-           cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-android15-6.6.patch ./common/
-           cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
-           cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-           #lz4kd
-           #cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
-           #cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
-           #cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
-           #cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
-           # Apply patches
-           
-           cd ./KernelSU
-              cp ../../kernel_patches/next/0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch ./
-              patch -p1 < 0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch || true
-              
-              
-              echo "susfs补丁安装完成"
-              
-           cd ./common
-           
-             sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-             sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-
-             #patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-             patch -p1 < 50_add_susfs_in_gki-android15-6.6.patch || true 
-             #cp ../../kernel_patches/sukisu/syscall_hooks.patch ./
-             
-             #patch -p1 < syscall_hooks.patch
-              
-             echo "vfs补丁完成"
-#           rm -rf ./fs/namespace.c
-#           rm -rf ./fs/namespace.c.rej
-#           cp ../../kernel_patches/namespace.c ./fs
-#           echo "复制namespace.c完成"
-
-#      - name: Apply lz4kd Patches
+#      - name: Apply New Hooks Patches
 #        run: |
 #          cd kernel_workspace/kernel_platform/common
-#          if [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-#          cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
-#          patch -p1 -F 3 < lz4kd.patch || true
-#          echo "::notice::✔ lz4kd补丁安装完成"
-#          elif [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-#          echo "::notice::✔ 跳过lz4kd补丁安装"
-#          fi
+#          cp ../../kernel_patches/hooks/new_hooks.patch ./
+#          patch -p1 -F 3 < new_hooks.patch
+#          echo "::notice::✔ new_hooks补丁安装完成"
            
       - name: Add SUSFS Configuration Settings
         run: |
@@ -168,8 +140,8 @@ jobs:
           fi
 
           # Add VFS configuration settings
-          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_KSU_SUSFS_SUS_SU=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
           
           # Add SUSFS configuration settings
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
