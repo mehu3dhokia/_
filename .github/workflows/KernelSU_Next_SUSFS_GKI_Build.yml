@@ -114,7 +114,7 @@ jobs:
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
            cp ../kernel_patches/next/0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch ./KernelSU-Next
-           cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
+           #cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
            #cp ../kernel_patches/next/fix_apk_sign.c.patch ./KernelSU-Next
            echo "copy file完成"
            
@@ -125,7 +125,7 @@ jobs:
            elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then 
            patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch || true
            echo "::notice::✔ Dev ksunext补丁安装完成"
-           patch -p1 < manager.patch || true
+           #patch -p1 < manager.patch || true
            #patch -p1 < fix_apk_sign.c.patch || true
            fi
            #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
