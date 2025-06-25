@@ -31,7 +31,7 @@ on:
           - Dev
           #- Next-SuSFS-Stable
           #- Next-SuSFS-Dev
-        default: 'Stable'
+        default: 'Dev'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
