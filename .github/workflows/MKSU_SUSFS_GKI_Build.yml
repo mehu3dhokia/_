@@ -94,7 +94,7 @@ jobs:
           #echo "::notice::✔ 已选择 Next-SuSFS-Stable 分支"
          #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then BRANCH="-s next-susfs-dev"
           #echo "::notice::✔ 已选择 Next-SuSFS-Dev 分支"
-          fi
+          #fi
           curl -LSs "https://raw.githubusercontent.com/5ec1cff/KernelSU/main/kernel/setup.sh" | bash -s main
           echo "完成"
           cd ./KernelSU-Next
