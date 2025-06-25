@@ -115,13 +115,14 @@ jobs:
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-android15-6.6.patch ./common/
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-           cp ../kernel_patches/next/ksun_susfs_v1.5.7_patch_12647+.patch ./KernelSU-Next#
+           cp ../kernel_patches/next/0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch ./KernelSU-Next#
            cp ../kernel_patches/next/manager.patch ./KernelSU-Next
+           cp ../kernel_patches/next/fix_apk_sign.c.patch ./KernelSU-Next
            echo "copy file完成"
            
            cd ./KernelSU-Next
            if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then   
-           patch -p1 < ksun_susfs_v1.5.7_patch_12647+.patch || true
+           patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch+.patch || true
            echo "::notice::✔ Stable ksunext补丁安装完成"
            elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then 
            patch -p1 < ksun_susfs_v1.5.7_patch_12647+.patch || true
@@ -131,6 +132,7 @@ jobs:
            elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then 
            echo "::notice::✔ Next-SuSFS-Dev 跳过ksunext补丁安装"
            patch -p1 < manager.patch || true
+           patch -p1 < fix_apk_sign.c.patch || true
            
            fi   
                    
