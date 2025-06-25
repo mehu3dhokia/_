@@ -141,9 +141,9 @@ jobs:
            patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
            echo "susfs安装完成"
            
-           cp ../../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./
-           patch -p1 < scope_min_manual_hooks_v1.4.patch
-           echo "scope_min_manual_hooks_v1.4安装完成"
+           cp ../../kernel_patches/next/syscall_hooks.patch ./
+           patch -p1 < syscall_hooks.patch || true
+           echo "syscall_hooks安装完成"
          
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
