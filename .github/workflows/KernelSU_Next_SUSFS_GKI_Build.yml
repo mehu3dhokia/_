@@ -116,7 +116,7 @@ jobs:
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
            cp ../kernel_patches/next/ksun_susfs_v1.5.7_patch_12647+.patch ./KernelSU-Next#
-           #cp ../kernel_patches/next/manager.patch ./KernelSU-Next
+           cp ../kernel_patches/next/manager.patch ./KernelSU-Next
            echo "copy file完成"
            
            cd ./KernelSU-Next
@@ -130,6 +130,8 @@ jobs:
            echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
            elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then 
            echo "::notice::✔ Next-SuSFS-Dev 跳过ksunext补丁安装"
+           patch -p1 < manager.patch || true
+           
            fi   
                    
            cd ../common
