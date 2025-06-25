@@ -125,17 +125,16 @@ jobs:
            patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch+.patch || true
            echo "::notice::✔ Stable ksunext补丁安装完成"
            elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then 
-           patch -p1 < ksun_susfs_v1.5.7_patch_12647+.patch || true
+           patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch || true
            echo "::notice::✔ Dev ksunext补丁安装完成"
-           elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
-           echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
-           elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then 
-           echo "::notice::✔ Next-SuSFS-Dev 跳过ksunext补丁安装"
            patch -p1 < manager.patch || true
            patch -p1 < fix_apk_sign.c.patch || true
+           fi
+           #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
+           #echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
+           #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then 
+           #echo "::notice::✔ Next-SuSFS-Dev 跳过ksunext补丁安装"
            
-           fi   
-                   
            cd ../common
            
            sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
