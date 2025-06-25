@@ -109,7 +109,7 @@ jobs:
            cd kernel_workspace
            #git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
            git clone https://github.com/mehu3dhokia/susfs4ksu.git
-           git clone https://github.com/WildKernels/kernel_patches.git
+           git clone https://github.com/mehu3dhokia/kernel_patches.git
            cd kernel_platform
            #cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-android15-6.6.patch ./common/
