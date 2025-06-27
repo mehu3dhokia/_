@@ -113,52 +113,37 @@ jobs:
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-           cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU-Next
-           cp ../kernel_patches/next/fix_apk_sign.c.patch ./KernelSU-Next
-           cp ../kernel_patches/next/fix_core_hook.c.patch ./KernelSU-Next
-           cp ../kernel_patches/next/fix_selinux.c.patch ./KernelSU-Next
-           cp ../kernel_patches/next/fix_ksud.c.patch ./KernelSU-Next
-           cp ../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./common/
-           #cp ../kernel_patches/next/0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch ./KernelSU-Next
-           cp ../kernel_patches/next/manager.patch ./KernelSU-Next
+           cp ../kernel_patches/next/0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch ./KernelSU-Next
+           #cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
+           #cp ../kernel_patches/next/fix_apk_sign.c.patch ./KernelSU-Next
            echo "copy file完成"
-
            
-           cd ./common
-           
-           sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-           sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-           
-           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-           echo "susfs安装完成"
-           
-      - name: 安装KsuNext补丁
-        run: |
-           cd kernel_workspace/kernel_platform/KernelSU-Next
-              patch -p1 --forward --fuzz=3 < 10_enable_susfs_for_ksu.patch || true
-              patch -p1 --forward --fuzz=3 < fix_apk_sign.c.patch
-              patch -p1 --forward --fuzz=3 < fix_core_hook.c.patch
-              patch -p1 --forward --fuzz=3 < fix_selinux.c.patch
-              patch -p1 --forward --fuzz=3 < fix_ksud.c.patch
-           #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then   
-           #patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch || true
-           #echo "::notice::✔ Stable ksunext补丁安装完成"
-           #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then 
-           #patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch || true
-           #echo "::notice::✔ Dev ksunext补丁安装完成"
+           cd ./KernelSU-Next
+           if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then   
+           patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch || true
+           echo "::notice::✔ Stable ksunext补丁安装完成"
+           elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then 
+           patch -p1 < 0001-kernel-implement-susfs-v1.5.8-KernelSU-Next-v1.0.8.patch || true
+           echo "::notice::✔ Dev ksunext补丁安装完成"
            #patch -p1 < manager.patch || true
            #patch -p1 < fix_apk_sign.c.patch || true
-           #fi
+           fi
            #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
            #echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
            #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then 
            #echo "::notice::✔ Next-SuSFS-Dev 跳过ksunext补丁安装"
-
-      - name: 安装钩子补丁
-        run: |
-           cd kernel_workspace/kernel_platform/common
-             patch -p1 < scope_min_manual_hooks_v1.4.patch || true
-             echo "scope_min_manual_hooks_v1.4安装完成"
+           
+           cd ../common
+           
+           #sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           #sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           
+           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+           echo "susfs安装完成"
+           
+           cp ../../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./
+           patch -p1 < scope_min_manual_hooks_v1.4.patch || true
+           echo "scope_min_manual_hooks_v1.4安装完成"
          
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
@@ -171,8 +156,8 @@ jobs:
 #      - name: 安装管理器补丁
 #        run: |
 #          cd kernel_workspace/kernel_platform/KernelSU-Next
-#           patch -p1 < manager.patch
-#           echo "管理器补丁安装完成"
+#          patch -p1 < manager.patch
+#          echo "管理器补丁安装完成"
            
       - name: 添加 SUSFS 配置设置
         run: |
