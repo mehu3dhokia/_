@@ -237,7 +237,7 @@ jobs:
       - name: Upload AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-         name: Susfs_1.5.8_SuKiSu_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
+         name: SuKiSu_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
          path: ./AnyKernel3/*
          
       - name: Upload Image
