@@ -1,4 +1,4 @@
-name: SUSFS_1.5.8_TEST
+name: Sukisu_SUSFS_GKI_Build
 on:
   workflow_dispatch:
     inputs:
