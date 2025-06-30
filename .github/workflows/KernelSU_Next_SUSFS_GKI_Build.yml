@@ -117,7 +117,7 @@ jobs:
              #cp ../kernel_patches/next/syscall_hooks.patch ./common/
              cp ../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./common/
              #cp ../kernel_patches/next/manager.patch ./KernelSU-Next
-             cp ../kernel_patches/next/fix_core_hook.c.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/fix_core_hook.c.patch ./KernelSU-Next
              echo "copy file完成"
            
            cd ./KernelSU-Next
@@ -133,8 +133,8 @@ jobs:
              
              #patch -p1 --fuzz=3 < manager.patch
              #echo "manager安装完成"
-             patch -p1 --fuzz=3 < fix_core_hook.c.patch
-             echo "fix_core_hook.c安装完成"
+             #patch -p1 --fuzz=3 < fix_core_hook.c.patch
+             #echo "fix_core_hook.c安装完成"
              
              fi
              
