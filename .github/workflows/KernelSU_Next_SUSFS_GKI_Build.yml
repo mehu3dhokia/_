@@ -136,7 +136,7 @@ jobs:
              
              #patch -p1 --fuzz=3 < manager.patch
              #echo "manager.patch安装完成"
-             patch -p1 -f --fuzz=3 < fix_apk_sign.c.patch
+             patch -p1 -r --fuzz=3 < fix_apk_sign.c.patch
              echo "fix_apk_sign.c.patch安装完成"
              patch -p1 --fuzz=3 < fix_core_hook.c.patch
              echo "fix_core_hook.c.patch安装完成"
