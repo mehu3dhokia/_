@@ -113,39 +113,40 @@ jobs:
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             cp ../kernel_patches/next/0001-Susfs-1.5.9.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/0001-Susfs-1.5.9.patch ./KernelSU-Next
              #cp ../kernel_patches/next/syscall_hooks.patch ./common/
              cp ../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./common/
-             #cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_apk_sign.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_core_hook.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_ksud.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_selinux.c.patch ./KernelSU-Next
+             cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU-Next
+             cp ../kernel_patches/next/susfs_fix_patches/v1.5.9/fix_apk_sign.c.patch ./KernelSU-Next
+             cp ../kernel_patches/next/susfs_fix_patches/v1.5.9/fix_core_hook.c.patch ./KernelSU-Next
+             cp ../kernel_patches/next/susfs_fix_patches/v1.5.9/fix_ksud.c.patch ./KernelSU-Next
+             cp ../kernel_patches/next/susfs_fix_patches/v1.5.9/fix_rules.c.patch ./KernelSU-Next
+             cp ../kernel_patches/next/susfs_fix_patches/v1.5.9/fix_selinux.c.patch ./KernelSU-Next
              echo "copy file完成"
            
            cd ./KernelSU-Next
-             if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
+             #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
              
-             patch -p1 --fuzz=3 < 0001-Susfs-1.5.9.patch
+             patch -p1 --fuzz=3 < 10_enable_susfs_for_ksu.patch
              echo "::notice::✔ Stable ksunext补丁安装完成"
              
-             elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then
+             #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then
              
-             patch -p1 --fuzz=3 < 0001-Susfs-1.5.9.patch
-             echo "::notice::✔ Dev ksunext补丁安装完成"
+             #patch -p1 --fuzz=3 < 0001-Susfs-1.5.9.patch
+             #echo "::notice::✔ Dev ksunext补丁安装完成"
              
-             #patch -p1 --fuzz=3 < manager.patch
-             #echo "manager.patch安装完成"
-             #patch -p1 --fuzz=3 < fix_apk_sign.c.patch
-             #echo "fix_apk_sign.c.patch安装完成"
-             #patch -p1 --fuzz=3 < fix_core_hook.c.patch
-             #echo "fix_core_hook.c.patch安装完成"
-             #patch -p1 --fuzz=3 < fix_ksud.c.patch
-             #echo "fix_ksud.c.patch安装完成"
-             #patch -p1 --fuzz=3 < fix_selinux.c.patch
-             #echo "fix_selinux.c.patch安装完成"
+             patch -p1 --fuzz=3 < fix_apk_sign.c.patch
+             echo "fix_apk_sign.c.patch安装完成"
+             patch -p1 --fuzz=3 < fix_core_hook.c.patch
+             echo "fix_core_hook.c.patch安装完成"
+             patch -p1 --fuzz=3 < fix_ksud.c.patch
+             echo "fix_ksud.c.patch安装完成"
+             patch -p1 --fuzz=3 < fix_rules.c.patch
+             echo "fix_rules.c.patch安装完成"
+             patch -p1 --fuzz=3 < fix_selinux.c.patch
+             echo "fix_selinux.c.patch安装完成"
              
-             fi
+             #fi
              
              #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
              #echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
