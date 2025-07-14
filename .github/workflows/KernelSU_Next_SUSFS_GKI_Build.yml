@@ -162,7 +162,7 @@ jobs:
            
              #patch -p1 --fuzz=3 < syscall_hooks.patch
              #echo "syscall_hooks.patch安装完成"
-             patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.4.patch
+             patch -p1 < scope_min_manual_hooks_v1.4.patch
              echo "scope_min_manual_hooks_v1.4.patch安装完成"
          
 #            rm -rf ./fs/namespace.c
