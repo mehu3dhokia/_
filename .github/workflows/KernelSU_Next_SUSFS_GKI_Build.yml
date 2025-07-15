@@ -22,16 +22,16 @@ on:
         description: "内核版本"
         required: true
         default: '6.6'
-      kernelsu_branch:
-        description: "选择KernelSU-Next分支版本"
-        required: true
-        type: choice
-        options:
-          - Stable
-          - Dev
+      #kernelsu_branch:
+        #description: "选择KernelSU-Next分支版本"
+        #required: true
+        #type: choice
+        #options:
+          #- Stable
+          #- Dev
           #- Next-SuSFS-Stable
           #- Next-SuSFS-Dev
-        default: 'Dev'
+        #default: 'Dev'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
