@@ -22,16 +22,16 @@ on:
         description: "内核版本"
         required: true
         default: '6.6'
-      kernelsu_branch:
-        description: "选择KernelSU-Next分支版本"
-        required: true
-        type: choice
-        options:
-          - Stable
-          - Dev
+      #kernelsu_branch:
+        #description: "选择KernelSU-Next分支版本"
+        #required: true
+        #type: choice
+        #options:
+          #- Stable
+          #- Dev
           #- Next-SuSFS-Stable
           #- Next-SuSFS-Dev
-        default: 'Dev'
+        #default: 'Dev'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
@@ -86,16 +86,13 @@ jobs:
       - name: 设置 KernelSU 分支
         run: |
          cd kernel_workspace/kernel_platform
-         if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-"
-          echo "::notice::✔ 已选择 Stable 分支"
-         elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
-          echo "::notice::✔ 已选择 Dev 分支"
-         #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then BRANCH="-s next-susfs"
-          #echo "::notice::✔ 已选择 Next-SuSFS-Stable 分支"
-         #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then BRANCH="-s next-susfs-dev"
-          #echo "::notice::✔ 已选择 Next-SuSFS-Dev 分支"
-          fi
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
+              #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-"
+              #echo "::notice::✔ 已选择 Stable 分支"
+              #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
+              #echo "::notice::✔ 已选择 Dev 分支"
+              #fi
+          #curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
+          curl -LSs "https://raw.githubusercontent.com/sidex15/KernelSU-Next/next/kernel/setup.sh" | bash -s next-susfs-experimental
           echo "完成"
           cd ./KernelSU-Next
           KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
@@ -108,42 +105,44 @@ jobs:
         run: |
            cd kernel_workspace
              git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
-             git clone https://github.com/mehu3dhokia/kernel_patches.git
+             git clone https://github.com/WildKernels/kernel_patches.git
            cd kernel_platform
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             cp ../kernel_patches/next/0001-Susfs-1.5.9.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/0001-Susfs-1.5.9.patch ./KernelSU-Next
              #cp ../kernel_patches/next/syscall_hooks.patch ./common/
              cp ../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./common/
              #cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
-             cp ../kernel_patches/next/2.patch ./KernelSU-Next
-             cp ../kernel_patches/next/3.patch ./KernelSU-Next
-             cp ../kernel_patches/next/4.patch ./KernelSU-Next
-             cp ../kernel_patches/next/5.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_apk_sign.c.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_core_hook.c.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_ksud.c.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_selinux.c.patch ./KernelSU-Next
              echo "copy file完成"
            
            cd ./KernelSU-Next
-             if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
+             #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
              
-             patch -p1 < 0001-Susfs-1.5.9.patch
-             echo "::notice::✔ Stable ksunext补丁安装完成"
+             #patch -p1 < 0001-Susfs-1.5.9.patch
+             #echo "::notice::✔ Stable ksunext补丁安装完成"
              
-             elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then
+             #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then
              
-             patch -p1 < 0001-Susfs-1.5.9.patch
-             echo "::notice::✔ Dev ksunext补丁安装完成"
+             #patch -p1 < 0001-Susfs-1.5.9.patch
+             #echo "::notice::✔ Dev ksunext补丁安装完成"
              
-             patch -p1 < 2.patch
-             echo "2.patch安装完成"
-             patch -p1 < 3.patch
-             echo "3.patch安装完成"
-             patch -p1 < 4.patch
-             echo "4.patch安装完成"
-             patch -p1 < 5.patch
-             echo "5.patch安装完成"
+             #patch -p1 < manager.patch
+             #echo "manager.patch安装完成"
+             #patch -p1 < fix_apk_sign.c.patch
+             #echo "fix_apk_sign.c.patch安装完成"
+             #patch -p1 < fix_core_hook.c.patch
+             #echo "fix_core_hook.c.patch安装完成"
+             #patch -p1 < fix_ksud.c.patch
+             #echo "fix_ksud.c.patch安装完成"
+             #patch -p1 < fix_selinux.c.patch
+             #echo "fix_selinux.c.patch安装完成"
              
-             fi
+             #fi
              
              #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
              #echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
