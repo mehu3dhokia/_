@@ -134,6 +134,12 @@ jobs:
              patch -p1 --fuzz=3 < 0001-Susfs-1.5.9.patch
              echo "::notice::✔ Dev ksunext补丁安装完成"
              
+             rm -rf ./kernel/core_hook.c
+             rm -rf ./kernel/ksud.c
+             rm -rf ./kernel/ksud.h
+             cp ../kernel_patches/core_hook.c ./kernel/
+             cp ../kernel_patches/ksud.c ./kernel/
+             cp ../kernel_patches/ksud.h ./kernel/
              #patch -p1 < manager.patch
              #echo "manager.patch安装完成"
              #patch -p1 < fix_apk_sign.c.patch
