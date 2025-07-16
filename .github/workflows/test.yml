@@ -117,10 +117,10 @@ jobs:
              #cp ../kernel_patches/next/syscall_hooks.patch ./common/
              cp ../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./common/
              #cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_apk_sign.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_core_hook.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_ksud.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_selinux.c.patch ./KernelSU-Next
+             cp ../kernel_patches/next/2.patch ./KernelSU-Next
+             cp ../kernel_patches/next/3.patch ./KernelSU-Next
+             cp ../kernel_patches/next/4.patch ./KernelSU-Next
+             cp ../kernel_patches/next/5.patch ./KernelSU-Next
              echo "copy file完成"
            
            cd ./KernelSU-Next
@@ -136,14 +136,14 @@ jobs:
              
              #patch -p1 < manager.patch
              #echo "manager.patch安装完成"
-             #patch -p1 < fix_apk_sign.c.patch
-             #echo "fix_apk_sign.c.patch安装完成"
-             #patch -p1 < fix_core_hook.c.patch
-             #echo "fix_core_hook.c.patch安装完成"
-             #patch -p1 < fix_ksud.c.patch
-             #echo "fix_ksud.c.patch安装完成"
-             #patch -p1 < fix_selinux.c.patch
-             #echo "fix_selinux.c.patch安装完成"
+             patch -p1 --fuzz=3 < 2.patch
+             echo "2.patch安装完成"
+             patch -p1 --fuzz=3 < 3.patch
+             echo "3.patch安装完成"
+             patch -p1 --fuzz=3 < 4.patch
+             echo "4.patch安装完成"
+             patch -p1 --fuzz=3 < 5.patch
+             echo "5.patch安装完成"
              
              fi
              
@@ -160,7 +160,7 @@ jobs:
              patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
              echo "susfs安装完成"
            
-             #patch -p1 < syscall_hooks.patch
+             #patch -p1 --fuzz=3 < syscall_hooks.patch
              #echo "syscall_hooks.patch安装完成"
              patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.4.patch
              echo "scope_min_manual_hooks_v1.4.patch安装完成"
