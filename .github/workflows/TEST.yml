@@ -115,7 +115,7 @@ jobs:
               #echo "::notice::✔ 已选择 Dev 分支"
               #fi
           #curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
-          curl -LSs "https://raw.githubusercontent.com/mehu3dhokia/KernelSU-Next/next/kernel/setup.sh" | bash -s next-susfs
+          curl -LSs "https://raw.githubusercontent.com/mehu3dhokia/KernelSU-Next/next/kernel/setup.sh" | bash -s next-susfs-experimental
           echo "完成"
           cd ./KernelSU-Next
           KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
