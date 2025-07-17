@@ -146,12 +146,12 @@ jobs:
            cd ./KernelSU-Next
              if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
              
-             patch -p1 --fuzz=3 < 0001-Susfs-1.5.9.patch
+             patch -p1 < 0001-Susfs-1.5.9.patch
              echo "::notice::✔ Stable ksunext补丁安装完成"
              
              elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then
              
-             patch -p1 --fuzz=3 < 0001-Susfs-1.5.9.patch
+             patch -p1 < 0001-Susfs-1.5.9.patch
              echo "::notice::✔ Dev ksunext补丁安装完成"
              
              #patch -p1 < manager.patch
