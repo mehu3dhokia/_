@@ -1,4 +1,4 @@
-name: test
+name: KernelSU_Next_SUSFS_GKI_Build
 on:
   workflow_dispatch:
     inputs:
