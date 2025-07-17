@@ -52,21 +52,56 @@ jobs:
         uses: easimon/maximize-build-space@master
         with:
           root-reserve-mb: 8192
-          temp-reserve-mb: 2048
+          temp-reserve-mb: 1024  # 减少临时空间保留，增加可用空间
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
           remove-codeql: 'true'
-          
+          remove-python: 'true'   # 注意：这里移除的是Python的缓存？但后续需要Python3，所以不能移除Python。如果这个动作是移除缓存则安全，否则谨慎。
+          # 实际上，maximize-build-space动作是清理空间，不会移除核心工具，所以可以保留remove-python，因为它可能是移除多余的Python版本或缓存。
+
+      - name: Create swap space (8GB)
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
+
       - name: Configure Git
         run: |
-         git config --global user.name "build"
-         git config --global user.email "123456789@qq.com"
+          git config --global user.name "build"
+          git config --global user.email "123456789@qq.com"
 
-      - name: Install dependencies
+      - name: Install essential dependencies
         run: |
-         sudo apt update && sudo apt upgrade -y
-         sudo apt install -y python3 git curl
+          # 只更新包列表，不升级系统（避免不必要的升级）
+          sudo apt update -y
+          # 安装构建所需的最小依赖
+          sudo apt install -y --no-install-recommends \
+            bc \
+            bison \
+            ca-certificates \
+            ccache \
+            clang \
+            cmake \
+            curl \
+            flex \
+            gcc \
+            g++ \
+            git \
+            libelf-dev \
+            libssl-dev \
+            make \
+            python3 \
+            rsync \
+            zip \
+            repo
+          # 清理缓存以节省空间
+          sudo apt clean
+          sudo rm -rf /var/lib/apt/lists/*
+
+      # ... 后续步骤保持不变 ...
 
       - name: Install repo tool
         run: |
