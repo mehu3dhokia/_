@@ -135,7 +135,7 @@ jobs:
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
              cp ../kernel_patches/next/0001-Susfs-1.5.9.patch ./KernelSU-Next
              #cp ../kernel_patches/next/syscall_hooks.patch ./common/
-             cp ../kernel_patches/next/scope_min_manual_hooks_v1.4.patch ./common/
+             cp ../kernel_patches/next/60_scope-minimized_manual_hooks.patch ./common/
              #cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
              #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_apk_sign.c.patch ./KernelSU-Next
              #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_core_hook.c.patch ./KernelSU-Next
