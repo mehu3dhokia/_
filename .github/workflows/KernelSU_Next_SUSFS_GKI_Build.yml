@@ -102,7 +102,18 @@ jobs:
          rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
          rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
          echo "完成"
-         
+
+      - name: 获取内核版本
+        id: get_kernel_version
+        run: |
+            cd kernel_workspace/kernel_platform/common
+               VERSION=$(grep -m1 '^VERSION =' Makefile | awk '{print $3}')
+               PATCHLEVEL=$(grep -m1 '^PATCHLEVEL =' Makefile | awk '{print $3}')
+               SUBLEVEL=$(grep -m1 '^SUBLEVEL =' Makefile | awk '{print $3}')
+               echo "::notice::内核版本: $VERSION.$PATCHLEVEL.$SUBLEVEL"
+               echo "::notice::KERNEL_FULL_VERSION=$VERSION.$PATCHLEVEL.$SUBLEVEL" >> $GITHUB_ENV
+               echo "::notice::KERNEL_FULL_VERSION=$VERSION.$PATCHLEVEL.$SUBLEVEL" >> $GITHUB_OUTPUT
+          
       - name: 设置 KernelSU 分支
         run: |
          cd kernel_workspace/kernel_platform
