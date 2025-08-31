@@ -99,7 +99,7 @@ jobs:
          mkdir kernel_workspace && cd kernel_workspace
          repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }} -m ${{ github.event.inputs.FEIL }}.xml --depth=1
          repo --trace sync -c -j$(nproc --all) --no-tags
-         rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
+         #rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
          #rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
          echo "完成"
 
@@ -264,6 +264,7 @@ jobs:
       - name: Build kernel
         run: |
          cd kernel_workspace/kernel_platform
+           sed -i '/protected_exports_list.*abi_gki_protected_exports_aarch64/s/^/# /' BUILD.bazel
            tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
            echo "完成"
          
