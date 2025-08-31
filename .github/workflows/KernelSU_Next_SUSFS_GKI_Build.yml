@@ -112,6 +112,7 @@ jobs:
           SUBLEVEL=$(grep -m1 '^SUBLEVEL =' Makefile | awk '{print $3}')
           EXTRAVERSION=$(grep -m1 '^EXTRAVERSION =' Makefile | awk '{print $3}')
           
+          sed -i '/protected_exports_list.*abi_gki_protected_exports_aarch64/s/^/# /' BUILD.bazel
           # 组合完整版本号
           FULL_VERSION="${VERSION}.${PATCHLEVEL}"
           if [ -n "${SUBLEVEL}" ] && [ "${SUBLEVEL}" != "0" ]; then
@@ -264,7 +265,6 @@ jobs:
       - name: Build kernel
         run: |
          cd kernel_workspace/kernel_platform
-           sed -i '/protected_exports_list.*abi_gki_protected_exports_aarch64/s/^/# /' BUILD.bazel
            tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
            echo "完成"
          
