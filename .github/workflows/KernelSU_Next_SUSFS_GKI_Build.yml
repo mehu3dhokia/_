@@ -39,7 +39,7 @@ on:
       build-timestamp:
         description: "修改构建时间"
         required: true
-        default: 'Tue Jul  1 19:48:18 UTC 2025'
+        default: 'Tue Jul 1 19:48:18 UTC 2025'
 jobs:
   build:
     runs-on: ubuntu-latest
