@@ -101,6 +101,9 @@ jobs:
          repo --trace sync -c -j$(nproc --all) --no-tags
          rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
          rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
+         
+         #Remove Abi Exports and Error
+         sed -i '/protected_exports_list.*abi_gki_protected_exports_aarch64/s/^/# /' ./kernel_platform/common/BUILD.bazel
          echo "完成"
 
       - name: 获取内核版本
@@ -112,7 +115,6 @@ jobs:
           SUBLEVEL=$(grep -m1 '^SUBLEVEL =' Makefile | awk '{print $3}')
           EXTRAVERSION=$(grep -m1 '^EXTRAVERSION =' Makefile | awk '{print $3}')
           
-          sed -i '/protected_exports_list.*abi_gki_protected_exports_aarch64/s/^/# /' BUILD.bazel
           # 组合完整版本号
           FULL_VERSION="${VERSION}.${PATCHLEVEL}"
           if [ -n "${SUBLEVEL}" ] && [ "${SUBLEVEL}" != "0" ]; then
