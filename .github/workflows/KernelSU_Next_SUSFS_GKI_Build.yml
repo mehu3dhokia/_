@@ -29,8 +29,6 @@ on:
         options:
           - Stable
           - Dev
-          #- Next-SuSFS-Stable
-          #- Next-SuSFS-Dev
         default: 'Dev'
       KERNEL_NAME:
         description: "修改内核名称"
@@ -135,13 +133,11 @@ jobs:
           echo "::notice::✔ 已选择 Stable 分支"
          elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
           echo "::notice::✔ 已选择 Dev 分支"
-         #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then BRANCH="-s next-susfs"
-          #echo "::notice::✔ 已选择 Next-SuSFS-Stable 分支"
-         #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then BRANCH="-s next-susfs-dev"
-          #echo "::notice::✔ 已选择 Next-SuSFS-Dev 分支"
           fi
+          
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
           echo "完成"
+          
           cd ./KernelSU-Next
           KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
@@ -159,13 +155,7 @@ jobs:
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
              cp ../kernel_patches/next/0001-Susfs-1.5.9.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/syscall_hooks.patch ./common/
              cp ../kernel_patches/next/60_scope-minimized_manual_hooks.patch ./common/
-             #cp ../kernel_patches/wild/manager.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_apk_sign.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_core_hook.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_ksud.c.patch ./KernelSU-Next
-             #cp ../kernel_patches/next/susfs_fix_patches/v1.5.8/fix_selinux.c.patch ./KernelSU-Next
              echo "copy file完成"
            
            cd ./KernelSU-Next
@@ -179,42 +169,18 @@ jobs:
              patch -p1 --fuzz=3 < 0001-Susfs-1.5.9.patch
              echo "::notice::✔ Dev ksunext补丁安装完成"
              
-             #patch -p1 < manager.patch
-             #echo "manager.patch安装完成"
-             #patch -p1 < fix_apk_sign.c.patch
-             #echo "fix_apk_sign.c.patch安装完成"
-             #patch -p1 < fix_core_hook.c.patch
-             #echo "fix_core_hook.c.patch安装完成"
-             #patch -p1 < fix_ksud.c.patch
-             #echo "fix_ksud.c.patch安装完成"
-             #patch -p1 < fix_selinux.c.patch
-             #echo "fix_selinux.c.patch安装完成"
-             
              fi
              
-             #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Stable" ]]; then 
-             #echo "::notice::✔ Next-SuSFS-Stable 跳过ksunext补丁安装"
-             #elif [[ "${{ inputs.kernelsu_branch }}" == "Next-SuSFS-Dev" ]]; then 
-             #echo "::notice::✔ Next-SuSFS-Dev 跳过ksunext补丁安装"
-
-           cd ../common
-           
+           cd ../common           
              #sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
              #sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
            
              patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
              echo "susfs安装完成"
            
-             #patch -p1 < syscall_hooks.patch
-             #echo "syscall_hooks.patch安装完成"
              patch -p1 --fuzz=3 < 60_scope-minimized_manual_hooks.patch
              echo "60_scope-minimized_manual_hooks.patch安装完成"
-         
-#            rm -rf ./fs/namespace.c
-#            rm -rf ./fs/namespace.c.rej
-#            cp ../../kernel_patches/namespace.c ./fs
-#            echo "复制namespace.c完成"
-
+             
 #            cp ../../kernel_patches/69_hide_stuff.patch ./
 #            patch -p1 -F 3 < 69_hide_stuff.patch
 #            echo "隐藏特征补丁安装完成"
