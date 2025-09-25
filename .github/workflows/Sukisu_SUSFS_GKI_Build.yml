@@ -27,17 +27,17 @@ on:
         #required: true
         #type: choice
         #options:
-          #- Stable
-          #- Dev
-        #default: 'Dev'
+          - Stable
+          - Dev
+        default: 'Stable'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
-        default: '-android15-8-g013ec21bba94-abogki383916444'
+        default: '-android15-8-g29d86c5fc9dd-abogki428889875'
       build-timestamp:
         description: "修改构建时间"
         required: true
-        default: 'Tue Dec 17 23:36:49 UTC 2024'
+        default: 'Tue Jul  1 19:48:18 UTC 2025'
       use_kpm:
         description: '是否开启KPM功能?'
         required: true
@@ -109,16 +109,20 @@ jobs:
          rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
          rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
          
+         #Remove Abi Exports and Error
+         sed -i '/protected_exports_list.*abi_gki_protected_exports_aarch64/s/^/# /' ./kernel_platform/common/BUILD.bazel
+         echo "完成"
+         
       - name: Set up SukiSU
         run: |
          cd kernel_workspace/kernel_platform
-         #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-s susfs-stable"
-          #echo "::notice::✔ 已选择 Stable 分支"
-         #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s susfs-dev"
-          #echo "::notice::✔ 已选择 Dev 分支"
-          #fi
-         #curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
-         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
+         if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-s susfs-main"
+          echo "::notice::✔ 已选择 Stable 分支"
+         elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s susfs-test"
+          echo "::notice::✔ 已选择 Dev 分支"
+          fi
+         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
+         #curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
          cd ./KernelSU
          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 10700)
          echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
@@ -144,12 +148,12 @@ jobs:
            # Apply patches
            cd ./common
 
-           sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-           sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           #sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           #sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
 
-           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-           cp ../../SukiSU_patch/hooks/syscall_hooks.patch ./
-           patch -p1 < syscall_hooks.patch
+           patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+           cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.5.patch ./
+           patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.5.patch
            echo "完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
@@ -161,7 +165,7 @@ jobs:
 #          cd kernel_workspace/kernel_platform/common
 #          if [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
 #          cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
-#          patch -p1 -F 3 < lz4kd.patch || true
+#          patch -p1 --fuzz=3 < lz4kd.patch || true
 #          echo "::notice::✔ lz4kd补丁安装完成"
 #          elif [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
 #          echo "::notice::✔ 跳过lz4kd补丁安装"
