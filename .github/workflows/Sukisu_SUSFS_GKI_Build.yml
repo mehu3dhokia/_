@@ -22,11 +22,11 @@ on:
         description: "内核版本"
         required: true
         default: '6.6'
-      #kernelsu_branch:
-        #description: "Sukisu分支版本"
-        #required: true
-        #type: choice
-        #options:
+      kernelsu_branch:
+        description: "Sukisu分支版本"
+        required: true
+        type: choice
+        options:
           - Stable
           - Dev
         default: 'Stable'
