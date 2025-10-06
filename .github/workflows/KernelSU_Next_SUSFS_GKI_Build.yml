@@ -40,7 +40,7 @@ on:
         default: 'Tue Jul  1 19:48:18 UTC 2025'
 jobs:
   build:
-    runs-on: ubuntu-25.04
+    runs-on: ubuntu-latest
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
