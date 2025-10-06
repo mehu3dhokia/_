@@ -109,13 +109,14 @@ jobs:
       - name: 设置 KernelSU 分支
         run: |
          cd kernel_workspace/kernel_platform
-         if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-"
-          echo "::notice::✔ 已选择 Stable 分支"
-         elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
-          echo "::notice::✔ 已选择 Dev 分支"
-          fi
+         #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-"
+          #echo "::notice::✔ 已选择 Stable 分支"
+         #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
+          #echo "::notice::✔ 已选择 Dev 分支"
+          #fi
           
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
+          #curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
+          curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s next-susfs
           echo "完成"
           
           cd ./KernelSU-Next
