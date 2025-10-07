@@ -135,7 +135,7 @@ jobs:
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             cp ../kernel_patches/next/0001-Susfs-1.5.11.patch ./KernelSU-Next
+             #cp ../kernel_patches/next/0001-Susfs-1.5.11.patch ./KernelSU-Next
              cp ../kernel_patches/next/60_scope-minimized_manual_hooks.patch ./common/
              echo "copy file完成"
            
