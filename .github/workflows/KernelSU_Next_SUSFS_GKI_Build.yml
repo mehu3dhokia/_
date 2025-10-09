@@ -169,40 +169,46 @@ jobs:
       - name: 添加 SUSFS 配置设置
         run: |
           cd kernel_workspace/kernel_platform
-            echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_KPROBES_HOOK=n" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
+             # SUSFS Configuration
+             echo "CONFIG_KSU_SUSFS=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> "$defconfig"
+          
+             # SUSFS Auto Mount Features
+             echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> "$defconfig"
+          
+             # SUSFS Advanced Features
+             echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> "$defconfig"
+          
+             # SUSFS Debugging and Security
+             echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> "$defconfig"
+             echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> "$defconfig"
 
-            # Add BBR Config
-            echo "CONFIG_DEFAULT_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_TCP_CONG_ADVANCED=y" >> ./common/arch/arm64/configs/gki_defconfig 
-            echo "CONFIG_TCP_CONG_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_NET_SCH_FQ=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_TCP_CONG_BIC=n" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_TCP_CONG_WESTWOOD=n" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_TCP_CONG_HTCP=n" >> ./common/arch/arm64/configs/gki_defconfig
+             # Add BBR Config
+             # BBR TCP Congestion Control
+             echo "CONFIG_DEFAULT_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
+             echo "CONFIG_TCP_CONG_ADVANCED=y" >> "$defconfig"
+             echo "CONFIG_TCP_CONG_BBR=y" >> "$defconfig"
+             echo "CONFIG_NET_SCH_FQ=y" >> "$defconfig"
+             echo "CONFIG_TCP_CONG_BIC=n" >> "$defconfig"
+             echo "CONFIG_TCP_CONG_WESTWOOD=n" >> "$defconfig"
+             echo "CONFIG_TCP_CONG_HTCP=n" >> "$defconfig"
          
-            sed -i 's/check_defconfig//' ./common/build.config.gki
+             sed -i 's/check_defconfig//' ./common/build.config.gki
 
-          #移除构建审查
-          cd common
-            git add -A && git commit -a -m "BUILD Kernel"
-            echo "完成"
+             #移除构建审查
+            cd common
+               git add -A && git commit -a -m "BUILD Kernel"
+             echo "完成"
 
       - name: 配置内核名称
         run: |
