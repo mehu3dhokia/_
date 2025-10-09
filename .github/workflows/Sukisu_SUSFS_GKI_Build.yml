@@ -282,11 +282,11 @@ jobs:
       - name: Upload AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-         name: SuKiSu_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}_${{ env.KERNEL_FULL_VERSION }}
+         name: SuKiSu_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}_${{ github.event.inputs.ANDROID_VERSION }}_${{ env.KERNEL_FULL_VERSION }}
          path: ./AnyKernel3/*
          
       - name: Upload Image
         uses: actions/upload-artifact@v4
         with:
-         name: Image_SuKiSu_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
+         name: Image_SuKiSu_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}_${{ github.event.inputs.ANDROID_VERSION }}_${{ env.KERNEL_FULL_VERSION }}
          path: kernel_workspace/kernel_platform/dist/Image
