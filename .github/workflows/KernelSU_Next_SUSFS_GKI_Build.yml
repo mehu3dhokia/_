@@ -206,8 +206,8 @@ jobs:
              sed -i 's/check_defconfig//' ./common/build.config.gki
 
              #移除构建审查
-            cd common
-               git add -A && git commit -a -m "BUILD Kernel"
+          cd common
+             git add -A && git commit -a -m "BUILD Kernel"
              echo "完成"
 
       - name: 配置内核名称
