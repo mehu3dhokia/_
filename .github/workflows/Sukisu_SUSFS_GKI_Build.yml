@@ -43,6 +43,11 @@ on:
         required: true
         type: boolean
         default: false
+      inputs.lz4kd:
+        description: '是否添加lz4kd功能?'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -70,7 +75,7 @@ jobs:
       - name: Install dependencies
         run: |
          sudo apt update && sudo apt upgrade -y
-         sudo apt install -y python3 git curl ccache
+         sudo apt install -y python3 git curl
 
       - name: Install repo tool
         run: |
@@ -118,10 +123,10 @@ jobs:
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
            #lz4kd
-           #cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
-           #cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
-           #cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
-           #cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
+           cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
+           cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
+           cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
+           cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
            # Apply patches
            cd ./common
 
@@ -137,16 +142,16 @@ jobs:
 #           cp ../../kernel_patches/namespace.c ./fs
 #           echo "复制namespace.c完成"
 
-#      - name: Apply lz4kd Patches
-#        run: |
-#          cd kernel_workspace/kernel_platform/common
-#          if [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-#          cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
-#          patch -p1 --fuzz=3 < lz4kd.patch || true
-#          echo "::notice::✔ lz4kd补丁安装完成"
-#          elif [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-#          echo "::notice::✔ 跳过lz4kd补丁安装"
-#          fi
+      - name: Apply lz4kd Patches
+        run: |
+          cd kernel_workspace/kernel_platform/common
+          if [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
+          cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
+          patch -p1 --fuzz=3 < lz4kd.patch || true
+          echo "::notice::✔ lz4kd补丁安装完成"
+          elif [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
+          echo "::notice::✔ 跳过lz4kd补丁安装"
+          fi
            
       - name: Add SUSFS Configuration Settings
         run: |
@@ -180,14 +185,21 @@ jobs:
           echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
 
-          # Add BBR Config
-          #echo "CONFIG_DEFAULT_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
-          #echo "CONFIG_TCP_CONG_ADVANCED=y" >> ./common/arch/arm64/configs/gki_defconfig 
-          #echo "CONFIG_TCP_CONG_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
-          #echo "CONFIG_NET_SCH_FQ=y" >> ./common/arch/arm64/configs/gki_defconfig
-          #echo "CONFIG_TCP_CONG_BIC=n" >> ./common/arch/arm64/configs/gki_defconfig
-          #echo "CONFIG_TCP_CONG_WESTWOOD=n" >> ./common/arch/arm64/configs/gki_defconfig
-          #echo "CONFIG_TCP_CONG_HTCP=n" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CRYPTO_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/configs/gki_defconfig
+
+          # Add BBR
+          echo "CONFIG_TCP_CONG_ADVANCED=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_TCP_CONG_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_FQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_TCP_CONG_BIC=n" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_TCP_CONG_CUBIC=n" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_TCP_CONG_WESTWOOD=n" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_TCP_CONG_HTCP=n" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_DEFAULT_TCP_CONG=bbr" >> ./common/arch/arm64/configs/gki_defconfig
 
           # Remove check_defconfig
           sed -i 's/check_defconfig//' ./common/build.config.gki
