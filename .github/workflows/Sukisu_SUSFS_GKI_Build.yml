@@ -134,8 +134,10 @@ jobs:
            #sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
 
            patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+           echo "::notice::susfs添加完成"
            cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.5.patch ./
            patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.5.patch
+           echo "::notice::最小化手动钩子安装完成"
            echo "完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
