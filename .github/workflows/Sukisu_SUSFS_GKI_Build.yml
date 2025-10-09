@@ -64,36 +64,13 @@ jobs:
           
       - name: Configure Git
         run: |
-         git config --global user.name "build"
-         git config --global user.email "3028172686@qq.com"
+         git config --global user.name "sidex15"
+         git config --global user.email "24408329+sidex15@users.noreply.github.com"
 
       - name: Install dependencies
         run: |
-         # 只更新包列表，不升级系统（避免不必要的升级）
-          sudo apt update -y
-          # 安装构建所需的最小依赖
-          sudo apt install -y --no-install-recommends \
-            bc \
-            bison \
-            ca-certificates \
-            ccache \
-            clang \
-            cmake \
-            curl \
-            flex \
-            gcc \
-            g++ \
-            git \
-            libelf-dev \
-            libssl-dev \
-            make \
-            python3 \
-            rsync \
-            zip \
-            repo
-          # 清理缓存以节省空间
-          sudo apt clean
-          sudo rm -rf /var/lib/apt/lists/*
+         sudo apt update && sudo apt upgrade -y
+         sudo apt install -y python3 git curl ccache
 
       - name: Install repo tool
         run: |
