@@ -161,6 +161,9 @@ jobs:
            
              patch -p1 --fuzz=3 < 60_scope-minimized_manual_hooks.patch
              echo "::notice::60_scope-minimized_manual_hooks.patch安装完成"
+
+           cd ../common/include/linux
+           echo "::notice::SUSFS Version: $(grep '#define SUSFS_VERSION' susfs.h | awk '{print $3}' | tr -d '"')"
              
 #            cp ../../kernel_patches/69_hide_stuff.patch ./
 #            patch -p1 -F 3 < 69_hide_stuff.patch
