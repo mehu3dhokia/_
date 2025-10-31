@@ -38,6 +38,17 @@ on:
         description: "修改构建时间"
         required: true
         default: 'Tue Jul  1 19:48:18 UTC 2025'
+      SCHED:
+        type: boolean
+        description: "是否添加风驰驱动？"
+        required: true
+        default: false
+      ZRAM:
+        type: boolean
+        description: "是否添加更多ZRAM算法？"
+        required: true
+        default: false
+      
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -131,12 +142,22 @@ jobs:
            cd kernel_workspace
              git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
              git clone https://github.com/mehu3dhokia/kernel_patches.git
+             git clone https://github.com/ShirkNeko/SukiSU_patch.git
            cd kernel_platform
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             #cp ../kernel_patches/next/0001-Susfs-1.5.11.patch ./KernelSU-Next
              cp ../kernel_patches/next/60_scope-minimized_manual_hooks.patch ./common/
+             
+            if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
+            echo "正在拉取zram补丁"
+            cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux/
+            cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib/
+            cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto/
+            cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
+            
+            if: ${{ github.event.inputs.SCHED == 'true' }}
+             cp ../kernel_patches/oneplus/hmbird/fengchi_6.6_B_13.patch ./common/
              echo "copy file完成"
            
            cd ./KernelSU-Next
@@ -169,6 +190,26 @@ jobs:
 #            patch -p1 -F 3 < 69_hide_stuff.patch
 #            echo "隐藏特征补丁安装完成"
 
+      - name: Apply ZRAM
+        if: ${{ github.event.inputs.ZRAM == 'true' }}
+        run: |
+          cd kernel_workspace/kernel_platform/common
+          cp ../../SukiSU_patch/other/zram/zram_patch/6.6/lz4kd.patch ./
+          echo "正在打lz4kd补丁"
+          patch -p1 -F 3 < lz4kd.patch || true
+          echo '::notice::lz4kd_patch完成'
+          cp ../../SukiSU_patch/other/zram/zram_patch/6.6/lz4k_oplus.patch ./
+          echo "正在打lz4k_oplus补丁"
+          patch -p1 -F 3 < lz4k_oplus.patch || true
+          echo '::notice::lz4k_oplus_patch完成'
+
+      - name: Apply SCHED
+        if: ${{ github.event.inputs.SCHED == 'true' }}
+        run: |
+          cd kernel_workspace/kernel_platform/common
+             patch -p1 --fuzz=3 < fengchi_6.6_B_13.patch
+             echo "::notice::添加风驰内核完成"
+             
       - name: 添加 SUSFS 配置设置
         run: |
           cd kernel_workspace/kernel_platform
