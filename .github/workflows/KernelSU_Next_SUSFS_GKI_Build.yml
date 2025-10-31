@@ -155,10 +155,12 @@ jobs:
             cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib/
             cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto/
             cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
+            fi
             
             if [ "${{ github.event.inputs.SCHED }}" = "true" ]; then
             cp ../kernel_patches/oneplus/hmbird/fengchi_6.6_B_13.patch ./common/
             echo "copy file完成"
+            fi
            
            cd ./KernelSU-Next
              #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
