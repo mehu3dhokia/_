@@ -147,7 +147,7 @@ jobs:
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             cp ../kernel_patches/next/60_scope-minimized_manual_hooks.patch ./common/
+             cp ../kernel_patches/next/scope_min_manual_hooks_v1.5.patch ./common/
              
             if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
             echo "正在拉取zram补丁"
@@ -182,8 +182,8 @@ jobs:
              patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
              echo "::notice::susfs安装完成"
            
-             patch -p1 --fuzz=3 < 60_scope-minimized_manual_hooks.patch
-             echo "::notice::60_scope-minimized_manual_hooks.patch安装完成"
+             patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.5.patch
+             echo "::notice::scope_min_manual_hooks_v1.5.patch安装完成"
 
            cd ../common/include/linux
            echo "::notice::SUSFS Version: $(grep '#define SUSFS_VERSION' susfs.h | awk '{print $3}' | tr -d '"')"
