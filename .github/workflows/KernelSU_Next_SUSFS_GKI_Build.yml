@@ -99,23 +99,15 @@ jobs:
         id: get_kernel_version
         run: |
           cd kernel_workspace/kernel_platform/common
-          VERSION=$(grep -m1 '^VERSION =' Makefile | awk '{print $3}')
-          PATCHLEVEL=$(grep -m1 '^PATCHLEVEL =' Makefile | awk '{print $3}')
-          SUBLEVEL=$(grep -m1 '^SUBLEVEL =' Makefile | awk '{print $3}')
-          EXTRAVERSION=$(grep -m1 '^EXTRAVERSION =' Makefile | awk '{print $3}')
-          
-          # 组合完整版本号
-          FULL_VERSION="${VERSION}.${PATCHLEVEL}"
-          if [ -n "${SUBLEVEL}" ] && [ "${SUBLEVEL}" != "0" ]; then
-            FULL_VERSION="${FULL_VERSION}.${SUBLEVEL}"
-          fi
-          if [ -n "${EXTRAVERSION}" ]; then
-            FULL_VERSION="${FULL_VERSION}${EXTRAVERSION}"
-          fi
-          
-          echo "内核完整版本: $FULL_VERSION"
-          echo "KERNEL_FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
-          echo "::notice::✔ 内核版本: $FULL_VERSION"
+            VERSION=$(sed -n 's/^VERSION\s*=\s*\([0-9]*\)/\1/p' Makefile | head -1)
+            PATCHLEVEL=$(sed -n 's/^PATCHLEVEL\s*=\s*\([0-9]*\)/\1/p' Makefile | head -1)
+            SUBLEVEL=$(sed -n 's/^SUBLEVEL\s*=\s*\([0-9]*\)/\1/p' Makefile | head -1)
+    
+            FULL_VERSION="${VERSION}.${PATCHLEVEL}.${SUBLEVEL}"
+    
+            echo "内核版本: $FULL_VERSION"
+            echo "KERNEL_FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
+            echo "::notice::✔ 内核版本: $FULL_VERSION"
           
       - name: 设置 KernelSU 分支
         run: |
