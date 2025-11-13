@@ -33,11 +33,11 @@ on:
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
-        default: '-android15-8-g29d86c5fc9dd-abogki428889875'
+        default: '-android15-8-gf4dc45704e54-abogki446052083'
       build-timestamp:
         description: "修改构建时间"
         required: true
-        default: 'Tue Jul  1 19:48:18 UTC 2025'
+        default: 'Fri Sep 19 06:13:40 UTC 2025'
       use_kpm:
         description: '是否开启KPM功能?'
         required: true
@@ -47,6 +47,11 @@ on:
         description: '是否添加lz4kd功能?'
         required: true
         type: boolean
+        default: false
+      SCHED:
+        type: boolean
+        description: "是否添加风驰驱动？"
+        required: true
         default: false
 
 jobs:
@@ -127,29 +132,30 @@ jobs:
           fi
          curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
          #curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
-         #cd ./KernelSU
-         KSU_LOCAL_VERSION=$(expr $(/usr/bin/git rev-list --count main))
-         KSU_VERSION := $(shell expr 40000 + $(KSU_LOCAL_VERSION) - 2815)
-         echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
-         export KSU_VERSION=$KSU_VERSION
-         sed -i "s/DKSU_VERSION=13000/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
-         echo "::notice::✔ Sukisu版本：$KSU_VERSION"
-        
+         
       - name: Set up susfs
         run: |
            cd kernel_workspace
            git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
            git clone https://github.com/SukiSU-Ultra/SukiSU_patch.git
+           git clone https://github.com/Numbersf/SCHED_PATCH.git
 
            cd kernel_platform        
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
            #lz4kd
+           if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
+           echo "正在拉取zram补丁"
            cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
            cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
            cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
            cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
+           
+           if [ "${{ github.event.inputs.SCHED }}" = "true" ]; then
+           cp ../SCHED_PATCH/fengchi_oneplus_13_b.patch ./common/
+           echo "copy SCHED_PATCH file完成"
+           fi
            # Apply patches
            cd ./common
 
@@ -168,16 +174,20 @@ jobs:
 #           echo "复制namespace.c完成"
 
       - name: Apply lz4kd Patches
+        if: ${{ github.event.inputs.lz4kd == 'true' }}
         run: |
-          cd kernel_workspace/kernel_platform/common
-          if [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-          cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
-          patch -p1 --fuzz=3 < lz4kd.patch || true
-          echo "::notice::✔ lz4kd补丁安装完成"
-          elif [[ "${{ github.event.inputs.lz4kd }}" == "true" ]]; then
-          echo "::notice::✔ 跳过lz4kd补丁安装"
-          fi
-           
+             cd kernel_workspace/kernel_platform/common
+             cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
+             patch -p1 --fuzz=3 < lz4kd.patch || true
+             echo "::notice::✔ lz4kd补丁安装完成"
+          
+      - name: Apply SCHED
+        if: ${{ github.event.inputs.SCHED == 'true' }}
+        run: |
+             cd kernel_workspace/kernel_platform/common
+             patch -p1 --fuzz=3 < fengchi_oneplus_13_b.patch
+             echo "::notice::添加风驰内核完成"
+  
       - name: Add SUSFS Configuration Settings
         run: |
           cd kernel_workspace/kernel_platform
@@ -212,24 +222,26 @@ jobs:
            echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
           
           # Add lz4kd
+          if [ "${{ github.event.inputs.lz4kd }}" == "true" ]; then
           echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CRYPTO_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
-
+          fi
           # Add BBR Config
-          echo "CONFIG_DEFAULT_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_TCP_CONG_ADVANCED=y" >> ./common/arch/arm64/configs/gki_defconfig 
-          echo "CONFIG_TCP_CONG_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_NET_SCH_FQ=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_TCP_CONG_BIC=n" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_TCP_CONG_WESTWOOD=n" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_TCP_CONG_HTCP=n" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_DEFAULT_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_TCP_CONG_ADVANCED=y" >> ./common/arch/arm64/configs/gki_defconfig 
+          #echo "CONFIG_TCP_CONG_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_NET_SCH_FQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_TCP_CONG_BIC=n" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_TCP_CONG_WESTWOOD=n" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_TCP_CONG_HTCP=n" >> ./common/arch/arm64/configs/gki_defconfig
 
-          # Remove check_defconfig
+          #移除构建审查
           sed -i 's/check_defconfig//' ./common/build.config.gki
           cd common
           git add -A && git commit -a -m "BUILD Kernel"
+          echo "移除构建审查完成"
           
       - name: Add make name
         run: |
