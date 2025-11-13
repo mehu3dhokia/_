@@ -27,9 +27,9 @@ on:
         required: true
         type: choice
         options:
-          - Stable
-          - Dev
-        default: 'Stable'
+          - susfs-main
+          - susfs-test
+        default: 'susfs-main'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
@@ -125,12 +125,8 @@ jobs:
       - name: Set up SukiSU
         run: |
          cd kernel_workspace/kernel_platform
-          if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-s susfs-main"
-          echo "::notice::✔ 已选择 Stable 分支"
-          elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s susfs-test"
-          echo "::notice::✔ 已选择 Dev 分支"
-          fi
-         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
+         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s ${{ env.kernelsu_branch }}
+         echo "::notice::✔ 已选择${{ env.kernelsu_branch }}分支"
          
       - name: Set up susfs
         run: |
