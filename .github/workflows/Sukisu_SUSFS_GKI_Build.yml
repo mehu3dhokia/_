@@ -144,23 +144,7 @@ jobs:
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-           #lz4kd
-           if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
-           echo "正在拉取zram补丁"
-           cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
-           cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
-           cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
-           cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
-           elif [[ "${{ github.event.inputs.lz4kd }}" == "false" ]]; then
-           echo "::notice::✔ 跳过LZ4KD_PATCH"
-           fi
            
-           if [ "${{ github.event.inputs.SCHED }}" = "true" ]; then
-           cp ../SCHED_PATCH/fengchi_oneplus_13_b.patch ./common/
-           echo "copy SCHED_PATCH file完成"
-           elif [[ "${{ github.event.inputs.SCHED }}" == "false" ]]; then
-           echo "::notice::✔ 跳过SCHED_PATCH"
-           fi
            # Apply patches
            cd ./common
 
@@ -182,6 +166,10 @@ jobs:
         if: ${{ github.event.inputs.lz4kd == 'true' }}
         run: |
              cd kernel_workspace/kernel_platform/common
+             cp ../../SukiSU_patch/other/zram/lz4k/include/linux/* ./include/linux
+             cp ../../SukiSU_patch/other/zram/lz4k/lib/* ./lib
+             cp ../../SukiSU_patch/other/zram/lz4k/crypto/* ./crypto
+             cp ../../SukiSU_patch/other/zram/lz4k_oplus ./lib/
              cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
              patch -p1 --fuzz=3 < lz4kd.patch || true
              echo "::notice::✔ lz4kd补丁安装完成"
@@ -190,6 +178,7 @@ jobs:
         if: ${{ github.event.inputs.SCHED == 'true' }}
         run: |
              cd kernel_workspace/kernel_platform/common
+             cp ../../SCHED_PATCH/fengchi_oneplus_13_b.patch ./
              patch -p1 --fuzz=3 < fengchi_oneplus_13_b.patch
              echo "::notice::添加风驰内核完成"
   
