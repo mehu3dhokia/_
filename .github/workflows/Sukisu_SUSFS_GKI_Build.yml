@@ -22,14 +22,14 @@ on:
         description: "内核版本"
         required: true
         default: '6.6'
-      #kernelsu_branch:
-        #description: "Sukisu分支版本"
-        #required: true
-        #type: choice
-        #options:
-          #- Stable
-          #- Dev
-        #default: 'Stable'
+      kernelsu_branch:
+        description: "Sukisu分支版本"
+        required: true
+        type: choice
+        options:
+          - Stable
+          - Dev
+        default: 'Stable'
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
@@ -43,11 +43,11 @@ on:
         required: true
         type: boolean
         default: false
-      inputs.lz4kd:
-        description: '是否添加lz4kd功能?'
-        required: true
-        type: boolean
-        default: false
+      #inputs.lz4kd:
+        #description: '是否添加lz4kd功能?'
+        #required: true
+        #type: boolean
+        #default: false
       SCHED:
         type: boolean
         description: "是否添加风驰驱动？"
@@ -125,13 +125,12 @@ jobs:
       - name: Set up SukiSU
         run: |
          cd kernel_workspace/kernel_platform
-          #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-s susfs-main"
-          #echo "::notice::✔ 已选择 Stable 分支"
-          #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s susfs-test"
-          #echo "::notice::✔ 已选择 Dev 分支"
-          #fi
-         #curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
-         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
+          if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-s susfs-main"
+          echo "::notice::✔ 已选择 Stable 分支"
+          elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s susfs-test"
+          echo "::notice::✔ 已选择 Dev 分支"
+          fi
+         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
          
       - name: Set up susfs
         run: |
@@ -146,15 +145,15 @@ jobs:
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
            
            #lz4kd
-           if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
-           echo "正在拉取zram补丁"
-           cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
-           cp -r ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
-           cp -r ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
-           cp -r ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
-           elif [[ "${{ github.event.inputs.lz4kd }}" == "false" ]]; then
-           echo "::notice::✔ 跳过LZ4KD_PATCH"
-           fi
+           #if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
+           #echo "正在拉取zram补丁"
+           #cp ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux
+           #cp ../SukiSU_patch/other/zram/lz4k/lib/* ./common/lib
+           #cp ../SukiSU_patch/other/zram/lz4k/crypto/* ./common/crypto
+           #cp ../SukiSU_patch/other/zram/lz4k_oplus ./common/lib/
+           #elif [[ "${{ github.event.inputs.lz4kd }}" == "false" ]]; then
+           #echo "::notice::✔ 跳过LZ4KD_PATCH"
+           #fi
            
            if [ "${{ github.event.inputs.SCHED }}" = "true" ]; then
            cp ../SCHED_PATCH/fengchi_oneplus_13_b.patch ./common/
@@ -180,13 +179,13 @@ jobs:
 #           cp ../../kernel_patches/namespace.c ./fs
 #           echo "复制namespace.c完成"
 
-      - name: Apply lz4kd Patches
-        if: ${{ github.event.inputs.lz4kd == 'true' }}
-        run: |
-             cd kernel_workspace/kernel_platform/common
-             cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
-             patch -p1 --fuzz=3 < lz4kd.patch || true
-             echo "::notice::✔ lz4kd补丁安装完成"
+#      - name: Apply lz4kd Patches
+#        if: ${{ github.event.inputs.lz4kd == 'true' }}
+#        run: |
+#             cd kernel_workspace/kernel_platform/common
+#             cp ../../SukiSU_patch/other/zram/zram_patch/${{ github.event.inputs.KERNEL_VERSION }}/lz4kd.patch ./
+#             patch -p1 --fuzz=3 < lz4kd.patch || true
+#             echo "::notice::✔ lz4kd补丁安装完成"
           
       - name: Apply SCHED
         if: ${{ github.event.inputs.SCHED == 'true' }}
