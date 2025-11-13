@@ -33,11 +33,11 @@ on:
       KERNEL_NAME:
         description: "修改内核名称"
         required: true
-        default: '-android15-8-g29d86c5fc9dd-abogki428889875'
+        default: '-android15-8-gf4dc45704e54-abogki446052083'
       build-timestamp:
         description: "修改构建时间"
         required: true
-        default: 'Tue Jul  1 19:48:18 UTC 2025'
+        default: 'Fri Sep 19 06:13:40 UTC 2025'
       SCHED:
         type: boolean
         description: "是否添加风驰驱动？"
