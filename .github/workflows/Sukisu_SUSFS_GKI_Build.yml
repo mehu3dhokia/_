@@ -43,17 +43,16 @@ on:
         required: true
         type: boolean
         default: false
-      #inputs.lz4kd:
-        #description: '是否添加lz4kd功能?'
-        #required: true
-        #type: boolean
-        #default: false
       SCHED:
         type: boolean
         description: "是否添加风驰驱动？"
         required: true
         default: false
-
+      #inputs.lz4kd:
+        #description: '是否添加lz4kd功能?'
+        #required: true
+        #type: boolean
+        #default: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -125,8 +124,13 @@ jobs:
       - name: Set up SukiSU
         run: |
          cd kernel_workspace/kernel_platform
-         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s ${{ env.kernelsu_branch }}
-         echo "::notice::✔ 已选择${{ env.kernelsu_branch }}分支"
+          if [[ "${{ inputs.kernelsu_branch }}" == "susfs-main" ]]; then BRANCH="-s susfs-main"
+          echo "::notice::✔ 已选择susfs-main分支"
+          elif [[ "${{ inputs.kernelsu_branch }}" == "susfs-test" ]]; then BRANCH="-s susfs-test"
+          echo "::notice::✔ 已选择susfs-test分支"
+          fi
+         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
+         #curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
          
       - name: Set up susfs
         run: |
