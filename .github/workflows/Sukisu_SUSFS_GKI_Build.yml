@@ -173,7 +173,7 @@ jobs:
            echo "::notice::susfs添加完成"
            cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./
            patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.6.patch
-           echo "::notice::最小化手动钩子安装完成"
+           echo "::notice::scope_min_manual_hooks_v1.6安装完成"
            echo "完成"
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
