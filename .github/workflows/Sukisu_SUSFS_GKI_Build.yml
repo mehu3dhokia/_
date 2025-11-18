@@ -176,10 +176,11 @@ jobs:
 
            patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
            echo "::notice::susfs添加完成"
+           if [ "${{ inputs.use_inlinehook }}" == "false" ]; then
            cp ../../SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./
            patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.6.patch
            echo "::notice::scope_min_manual_hooks_v1.6安装完成"
-           echo "完成"
+           fi
 #           rm -rf ./fs/namespace.c
 #           rm -rf ./fs/namespace.c.rej
 #           cp ../../kernel_patches/namespace.c ./fs
@@ -213,9 +214,9 @@ jobs:
 
           # Add VFS configuration settings
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
-          if [ "${{ inputs.use_kpm }}" == "true" ]; then
+          if [ "${{ inputs.use_inlinehook }}" == "true" ]; then
              echo "::notice::✔ INLINE_HOOK"
-          if [ "${{ inputs.use_kpm }}" == "false" ]; then
+          if [ "${{ inputs.use_inlinehook }}" == "false" ]; then
           echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "::notice::✔ MANUAL_HOOK"
           fi
