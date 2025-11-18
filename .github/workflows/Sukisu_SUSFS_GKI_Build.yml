@@ -138,6 +138,13 @@ jobs:
          curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
          #curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
          
+         cd ./KernelSU
+         KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 37185)
+         echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
+         export KSU_VERSION=$KSU_VERSION
+         sed -i "s/DKSU_VERSION=13000/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
+         echo "::notice::✔ Sukisu版本：$KSU_VERSION"
+         
       - name: Set up susfs
         run: |
            cd kernel_workspace
@@ -216,8 +223,8 @@ jobs:
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
           if [ "${{ inputs.use_inlinehook }}" == "true" ]; then
              echo "::notice::✔ INLINE_HOOK"
-          if [ "${{ inputs.use_inlinehook }}" == "false" ]; then
-          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          elif [ "${{ inputs.use_inlinehook }}" == "false" ]; then
+             echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "::notice::✔ MANUAL_HOOK"
           fi
           
