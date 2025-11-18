@@ -10,10 +10,10 @@ on:
         description: "配置文件"
         required: true
         default: 'oneplus_13_b'
-      CPUD:
-        description: "处理器代号"
-        required: true
-        default: 'sun'
+      #CPUD:
+        #description: "处理器代号"
+        #required: true
+        #default: 'sun'
       ANDROID_VERSION:
         description: "内核安卓版本"
         required: true
@@ -47,6 +47,11 @@ on:
         type: boolean
         description: "是否添加风驰驱动？"
         required: true
+        default: false
+      use_inlinehook:
+        description: '是否启用内联钩子?'
+        required: true
+        type: boolean
         default: false
       #inputs.lz4kd:
         #description: '是否添加lz4kd功能?'
@@ -208,7 +213,12 @@ jobs:
 
           # Add VFS configuration settings
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
+          if [ "${{ inputs.use_kpm }}" == "true" ]; then
+             echo "::notice::✔ INLINE_HOOK"
+          if [ "${{ inputs.use_kpm }}" == "false" ]; then
           echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
+             echo "::notice::✔ MANUAL_HOOK"
+          fi
           
           # Add SUSFS Configuration
            echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -229,12 +239,12 @@ jobs:
            echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
           
           # Add lz4kd
-          if [ "${{ github.event.inputs.lz4kd }}" == "true" ]; then
-          echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
-          fi
+          #if [ "${{ github.event.inputs.lz4kd }}" == "true" ]; then
+          #echo "CONFIG_CRYPTO_LZ4HC=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_CRYPTO_LZ4K=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #fi
           # Add BBR Config
           #echo "CONFIG_DEFAULT_BBR=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_TCP_CONG_ADVANCED=y" >> ./common/arch/arm64/configs/gki_defconfig 
