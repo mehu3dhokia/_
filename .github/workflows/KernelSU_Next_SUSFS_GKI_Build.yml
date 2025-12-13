@@ -118,8 +118,8 @@ jobs:
           #echo "::notice::✔ 已选择 Dev 分支"
           #fi
           
-          #curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash $BRANCH
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s dev
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
+          #curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s next-susfs
           echo "完成"
           
           cd ./KernelSU-Next
