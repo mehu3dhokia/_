@@ -118,12 +118,12 @@ jobs:
           #echo "::notice::✔ 已选择 Dev 分支"
           #fi
           
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s next
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
           #curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s next-susfs
           echo "完成"
           
           cd ./KernelSU-Next
-          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 30000)
+          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count origin/HEAD) "+" 30000)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           export KSU_VERSION=$KSU_VERSION
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
