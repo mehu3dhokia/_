@@ -141,18 +141,6 @@ jobs:
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
              cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_Makefile.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_allowlist.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_apk_sign.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_app_profile.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_kernel_umount.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_ksu.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_ksud.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_selinux.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_selinux.h.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_sucompat.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_sucompat.h.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_supercalls.c.patch ./KernelSU-Next/
              
             if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
             echo "正在拉取zram补丁"
@@ -168,19 +156,6 @@ jobs:
             fi
            
            cd ./KernelSU-Next
-             patch -p1 --fuzz=3 < fix_Makefile.patch
-             patch -p1 --fuzz=3 < fix_allowlist.c.patch
-             patch -p1 --fuzz=3 < fix_apk_sign.c.patch
-             patch -p1 --fuzz=3 < fix_app_profile.c.patch
-             patch -p1 --fuzz=3 < fix_kernel_umount.c.patch
-             patch -p1 --fuzz=3 < fix_ksu.c.patch
-             patch -p1 --fuzz=3 < fix_ksud.c.patch
-             patch -p1 --fuzz=3 < fix_selinux.c.patch
-             patch -p1 --fuzz=3 < fix_selinux.h.patch
-             patch -p1 --fuzz=3 < fix_sucompat.c.patch
-             patch -p1 --fuzz=3 < fix_sucompat.h.patch
-             patch -p1 --fuzz=3 < fix_supercalls.c.patch
-             
              #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
              
              #patch -p1 --fuzz=3 < 0001-Susfs-1.5.11.patch
