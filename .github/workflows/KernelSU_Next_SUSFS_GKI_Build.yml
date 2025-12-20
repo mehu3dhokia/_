@@ -133,7 +133,7 @@ jobs:
         run: |
            cd kernel_workspace
              #git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
-             git clone https://gitlab.com/simonpunk/susfs4ksu.git -b f450ec00bf592d080f59b01ff6f9242456c9a427
+             git clone https://gitlab.com/mehu3dhokia/susfs4ksu.git -b gki-android15-6.6
              git clone https://github.com/mehu3dhokia/kernel_patches.git
              git clone https://github.com/ShirkNeko/SukiSU_patch.git
              git clone https://github.com/Numbersf/SCHED_PATCH.git
