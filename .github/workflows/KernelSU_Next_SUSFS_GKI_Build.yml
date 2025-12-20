@@ -123,7 +123,7 @@ jobs:
           echo "完成"
           
           cd ./KernelSU-Next
-          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count origin/HEAD) "+" 10200)
+          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count origin/HEAD) "+" 30000)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           export KSU_VERSION=$KSU_VERSION
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
@@ -133,7 +133,7 @@ jobs:
         run: |
            cd kernel_workspace
              #git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
-             git clone https://gitlab.com/mehu3dhokia/susfs4ksu.git -b gki-android15-6.6
+             git clone https://github.com/mehu3dhokia/susfs4ksu.git -b gki-android15-6.6
              git clone https://github.com/mehu3dhokia/kernel_patches.git
              git clone https://github.com/ShirkNeko/SukiSU_patch.git
              git clone https://github.com/Numbersf/SCHED_PATCH.git
