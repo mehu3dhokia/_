@@ -141,7 +141,7 @@ jobs:
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             #cp ../kernel_patches/next/scope_min_manual_hooks_v1.5.patch ./common/
+             cp ../kernel_patches/next/scope_min_manual_hooks_v1.5.patch ./common/
              
             if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
             echo "正在拉取zram补丁"
