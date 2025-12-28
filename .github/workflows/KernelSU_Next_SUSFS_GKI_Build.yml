@@ -124,8 +124,8 @@ jobs:
           #fi
           
           #curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s legacy
-          #curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/refs/heads/dev-susfs/kernel/setup.sh" | bash -s dev-susfs
+          #curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s legacy
+          curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/refs/heads/dev-susfs/kernel/setup.sh" | bash -s dev-susfs
           echo "完成"
           
           cd ./KernelSU-Next
@@ -148,18 +148,18 @@ jobs:
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_Makefile.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_allowlist.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_apk_sign.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_kernel_umount.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_ksu.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_ksud.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_selinux.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_sucompat.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_supercalls.c.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/ksu_toolkit.patch ./KernelSU-Next/
-             cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/overwrite_hook_mode.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_Makefile.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_allowlist.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_apk_sign.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_kernel_umount.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_ksu.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_ksud.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_selinux.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_sucompat.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/fix_supercalls.c.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/ksu_toolkit.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/susfs_fix_patches/v2.0.0/overwrite_hook_mode.patch ./KernelSU-Next/
              
             if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
             echo "正在拉取zram补丁"
@@ -175,17 +175,17 @@ jobs:
             fi
            
            cd ./KernelSU-Next
-             patch -p1 --fuzz=3 < fix_Makefile.patch
-             patch -p1 --fuzz=3 < fix_allowlist.c.patch
-             patch -p1 --fuzz=3 < fix_apk_sign.c.patch
-             patch -p1 --fuzz=3 < fix_kernel_umount.c.patch
-             patch -p1 --fuzz=3 < fix_ksu.c.patch
-             patch -p1 --fuzz=3 < fix_ksud.c.patch
-             patch -p1 --fuzz=3 < fix_selinux.c.patch
-             patch -p1 --fuzz=3 < fix_sucompat.c.patch
-             patch -p1 --fuzz=3 < fix_supercalls.c.patch
-             patch -p1 --fuzz=3 < ksu_toolkit.patch
-             patch -p1 --fuzz=3 < overwrite_hook_mode.patch
+             #patch -p1 --fuzz=3 < fix_Makefile.patch
+             #patch -p1 --fuzz=3 < fix_allowlist.c.patch
+             #patch -p1 --fuzz=3 < fix_apk_sign.c.patch
+             #patch -p1 --fuzz=3 < fix_kernel_umount.c.patch
+             #patch -p1 --fuzz=3 < fix_ksu.c.patch
+             #patch -p1 --fuzz=3 < fix_ksud.c.patch
+             #patch -p1 --fuzz=3 < fix_selinux.c.patch
+             #patch -p1 --fuzz=3 < fix_sucompat.c.patch
+             #patch -p1 --fuzz=3 < fix_supercalls.c.patch
+             #patch -p1 --fuzz=3 < ksu_toolkit.patch
+             #patch -p1 --fuzz=3 < overwrite_hook_mode.patch
              #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
              
              #patch -p1 --fuzz=3 < 0001-Susfs-1.5.11.patch
@@ -205,8 +205,8 @@ jobs:
              patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
              echo "::notice::susfs安装完成"
            
-             patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.6.patch
-             echo "::notice::scope_min_manual_hooks_v1.6.patch安装完成"
+             #patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.6.patch
+             #echo "::notice::scope_min_manual_hooks_v1.6.patch安装完成"
 
            cd ../common/include/linux
            echo "::notice::SUSFS Version: $(grep '#define SUSFS_VERSION' susfs.h | awk '{print $3}' | tr -d '"')"
