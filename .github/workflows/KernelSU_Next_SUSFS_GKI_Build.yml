@@ -42,7 +42,7 @@ on:
         type: boolean
         description: "是否添加Unicode零宽绕过修复与内存优化补丁？"
         required: true
-        default: true
+        default: false
       SCHED:
         type: boolean
         description: "是否添加风驰驱动？"
@@ -143,11 +143,12 @@ jobs:
              git clone https://github.com/mehu3dhokia/kernel_patches.git
              git clone https://github.com/ShirkNeko/SukiSU_patch.git
              git clone https://github.com/Numbersf/SCHED_PATCH.git
-             git clone https://github.com/Numbersf/Action-Build.git
+             #git clone https://github.com/Numbersf/Action-Build.git
            cd kernel_platform
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+             cp ../kernel_patches/common/unicode_bypass_fix_6.1+.patch ./common/
              #cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
              #cp ../kernel_patches/next/0001-Susfs-2.0.0.patch ./KernelSU-Next/
              
@@ -183,7 +184,10 @@ jobs:
              #sed -i '/#include <trace\/hooks\/fs.h>/d' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
            
              patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
-             echo "::notice::susfs安装完成"
+             echo "::notice::50_susfs补丁安装完成"
+             
+             patch -p1 --forward < unicode_bypass_fix_6.1+.patch
+             echo "::notice::修复0宽字符提权"
            
              #patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.6.patch
              #echo "::notice::scope_min_manual_hooks_v1.6.patch安装完成"
@@ -195,10 +199,10 @@ jobs:
 #            patch -p1 -F 3 < 69_hide_stuff.patch
 #            echo "隐藏特征补丁安装完成"
 
-      - name: 应用Unicode零宽绕过修复与内存优化补丁
+      - name: 应用内存优化补丁
         if: ${{ github.event.inputs.UNICODE_BYPASS == 'true' }}
         run: |
-          PATCH_DIR="${GITHUB_WORKSPACE}/kernel_workspace/Action-Build/patches"
+          PATCH_DIR="${GITHUB_WORKSPACE}/kernel_workspace/kernel_patches/common"
           cd kernel_workspace/kernel_platform/common
           patch -p1 --forward < "${PATCH_DIR}/optimized_mem_operations.patch"
           patch -p1 --forward < "${PATCH_DIR}/file_struct_8bytes_align.patch"
@@ -208,9 +212,8 @@ jobs:
             #echo "Patching unicode!"
             #patch -p1 --forward < "${PATCH_DIR}/unicode_bypass_fix_6.1-.patch"
           #else
-            cat "${PATCH_DIR}/clear_page_16bytes_align.patch" | sed -e 's/SYM_FUNC_START_PI(clear_page)/SYM_FUNC_START_PI(__pi_clear_page)/' | patch -p1 -F3 --forward            
-            patch -p1 --forward < "${PATCH_DIR}/unicode_bypass_fix_6.1+.patch"
-          echo "::notice::应用Unicode零宽绕过修复与内存优化补丁!"
+            cat "${PATCH_DIR}/clear_page_16bytes_align.patch" | sed -e 's/SYM_FUNC_START_PI(clear_page)/SYM_FUNC_START_PI(__pi_clear_page)/' | patch -p1 -F3 --forward
+          echo "::notice::应用内存优化补丁!"
           
       - name: Apply ZRAM
         if: ${{ github.event.inputs.ZRAM == 'true' }}
