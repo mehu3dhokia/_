@@ -38,14 +38,14 @@ on:
         description: "修改构建时间"
         required: true
         default: 'Fri Sep 19 06:13:40 UTC 2025'
-      UNICODE_BYPASS:
-        type: boolean
-        description: "是否添加Unicode零宽绕过修复与内存优化补丁？"
-        required: true
-        default: false
       SCHED:
         type: boolean
         description: "是否添加风驰驱动？"
+        required: true
+        default: true
+      UNICODE_BYPASS:
+        type: boolean
+        description: "是否添加Unicode零宽绕过修复与内存优化补丁？"
         required: true
         default: false
       ZRAM:
