@@ -277,7 +277,7 @@ jobs:
 
              sed -i 's/check_defconfig//' ./common/build.config.gki
 
-             #移除构建审查
+             #移除构建审查depth
             cd common
             git add -A && git commit -a -m "BUILD Kernel"
             echo "移除构建审查"
@@ -307,7 +307,7 @@ jobs:
          
       - name: Make AnyKernel3
         run: |
-         git clone https://github.com/mehu3dhokia/AnyKernel3.git --depth=1
+         git clone https://github.com/WildKernels/AnyKernel3.git --=1
          rm -rf ./AnyKernel3/.git
          rm -rf ./AnyKernel3/push.sh
          cp kernel_workspace/kernel_platform/dist/Image ./AnyKernel3/
