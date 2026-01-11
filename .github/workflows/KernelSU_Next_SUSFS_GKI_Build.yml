@@ -145,9 +145,10 @@ jobs:
              git clone https://github.com/Numbersf/SCHED_PATCH.git
              #git clone https://github.com/Numbersf/Action-Build.git
            cd kernel_platform
-             cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
+             #cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+             cp ../kernel_patches/50_add_susfs_in_gki-android15-6.6.patch ./common/
              #cp ../kernel_patches/common/unicode_bypass_fix_6.1+.patch ./common/
              #cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
              #cp ../kernel_patches/next/0001-Susfs-2.0.0.patch ./KernelSU-Next/
