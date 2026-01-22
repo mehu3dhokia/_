@@ -117,18 +117,12 @@ jobs:
       - name: 设置 KernelSU 分支
         run: |
          cd kernel_workspace/kernel_platform
-         #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then BRANCH="-"
-          #echo "::notice::✔ 已选择 Stable 分支"
-         #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then BRANCH="-s next"
-          #echo "::notice::✔ 已选择 Dev 分支"
-          #fi
-          
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev_susfs
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
           #curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/dev-susfs/kernel/setup.sh" | bash -s dev-susfs
           echo "完成"
           
           cd ./KernelSU-Next
-          KSU_VERSION=$(expr $(git rev-list --count origin/dev) "+" 30000)
+          KSU_VERSION=$(expr $(git rev-list --count HEAD) "+" 30000)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           export KSU_VERSION=$KSU_VERSION
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Kbuild
@@ -147,10 +141,9 @@ jobs:
              cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-             #cp ../kernel_patches/50_add_susfs_in_gki-android15-6.6.patch ./common/
              #cp ../kernel_patches/common/unicode_bypass_fix_6.1+.patch ./common/
              #cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
-             #cp ../kernel_patches/next/0001-Susfs-2.0.0.patch ./KernelSU-Next/
+             cp ../kernel_patches/next/0001-SUSFS-2.0.0.patch ./KernelSU-Next/
              
             if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
             echo "正在拉取zram补丁"
@@ -166,18 +159,8 @@ jobs:
             fi
            
            cd ./KernelSU-Next
-             #patch -p1 --fuzz=3 < 0001-Susfs-2.0.0.patch
-             #if [[ "${{ inputs.kernelsu_branch }}" == "Stable" ]]; then
-             
-             #patch -p1 --fuzz=3 < 0001-Susfs-1.5.11.patch
-             #echo "::notice::✔ Stable ksunext补丁安装完成"
-             
-             #elif [[ "${{ inputs.kernelsu_branch }}" == "Dev" ]]; then
-             
-             #patch -p1 --fuzz=3 < 0001-Susfs-1.5.11.patch
-             #echo "::notice::✔ksunext补丁安装完成"
-             
-             #fi
+             patch -p1 --fuzz=3 < 0001-SUSFS-2.0.0.patch
+             echo "::notice::✔ksunext补丁安装完成"
              
            cd ../common           
              #sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
