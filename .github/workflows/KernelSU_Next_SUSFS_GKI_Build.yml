@@ -122,7 +122,7 @@ jobs:
           echo "完成"
           
           cd ./KernelSU-Next
-          KSU_VERSION=$(expr $(git rev-list --count origin/HEAD) "+" 30000)
+          KSU_VERSION=$(expr $(git rev-list --count origin/dev) "+" 30000)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           export KSU_VERSION=$KSU_VERSION
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Kbuild
