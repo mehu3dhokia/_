@@ -117,8 +117,8 @@ jobs:
       - name: 设置 KernelSU 分支
         run: |
          cd kernel_workspace/kernel_platform
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
-          #curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/dev-susfs/kernel/setup.sh" | bash -s dev-susfs
+          #curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
+          curl -LSs "https://raw.githubusercontent.com/mehu3dhokia/KernelSU-Next/dev-susfs/kernel/setup.sh" | bash -s dev-susfs
           echo "完成"
           
           cd ./KernelSU-Next
@@ -142,8 +142,8 @@ jobs:
              cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
              cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
              #cp ../kernel_patches/common/unicode_bypass_fix_6.1+.patch ./common/
-             cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
-             cp ../kernel_patches/next/0001-SUSFS-2.0.0.patch ./KernelSU-Next/
+             #cp ../kernel_patches/next/scope_min_manual_hooks_v1.6.patch ./common/
+             #cp ../kernel_patches/next/0001-SUSFS-2.0.0.patch ./KernelSU-Next/
              
             if [ "${{ github.event.inputs.ZRAM }}" = "true" ]; then
             echo "正在拉取zram补丁"
@@ -159,8 +159,8 @@ jobs:
             fi
            
            cd ./KernelSU-Next
-             patch -p1 --fuzz=3 < 0001-SUSFS-2.0.0.patch
-             echo "::notice::✔ksunext补丁安装完成"
+             #patch -p1 --fuzz=3 < 0001-SUSFS-2.0.0.patch
+             #echo "::notice::✔ksunext补丁安装完成"
              
            cd ../common           
              #sed -i 's/-32,12 +32,38/-32,11 +32,37/g' 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
@@ -172,8 +172,8 @@ jobs:
              #patch -p1 --forward < unicode_bypass_fix_6.1+.patch
              #echo "::notice::修复0宽字符提权"
            
-             patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.6.patch
-             echo "::notice::scope_min_manual_hooks_v1.6.patch安装完成"
+             #patch -p1 --fuzz=3 < scope_min_manual_hooks_v1.6.patch
+             #echo "::notice::scope_min_manual_hooks_v1.6.patch安装完成"
 
            cd ../common/include/linux
            echo "::notice::SUSFS Version: $(grep '#define SUSFS_VERSION' susfs.h | awk '{print $3}' | tr -d '"')"
@@ -233,6 +233,7 @@ jobs:
              echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "CONFIG_KSU_SUSFS_SUS_MAP=y" >> ./common/arch/arm64/configs/gki_defconfig
+             echo "CONFIG_TRACEPOINTS=y" >> ./common/arch/arm64/configs/gki_defconfig
              
              #echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
              #echo "CONFIG_KSU_KPROBES_HOOK=n" >> ./common/arch/arm64/configs/gki_defconfig
